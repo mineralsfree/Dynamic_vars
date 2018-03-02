@@ -47,6 +47,10 @@ implementation
 
 procedure TForm1.btn1Click(Sender: TObject);
 begin
+  temp:=Head;
+ while temp^.ADR<>nil do
+ temp:=temp^.ADR;           //scroll to free space
+
   New(temp^.ADR);         //Âûהוכÿול לוסעמ ג ןאלÿעט
   temp:=temp^.ADR;
   temp^.ADR:=nil;
@@ -54,12 +58,15 @@ begin
   temp^.INF.orderDate:=VarToDateTime(InputBox
   ('InsertDate','Please,insert num of the order','03.03.2018'));
   temp^.INF.cutomerReq:=InputBox('InsertReq','Please,insert Customer requisites','2281488');
-
+  btn2.Visible:=True;
 end;
 
 procedure TForm1.btn2Click(Sender: TObject);
 begin
+strngrd1.RowCount:=2;
+strngrd1.ColCount:=3;
  temp:=Head^.ADR;
+
  while temp<>nil do
  begin
   strngrd1.Cells[0,strngrd1.RowCount-1]:=temp^.INF.orderNum;
@@ -75,6 +82,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 var
   I: Integer;
 begin
+btn2.Visible:=False;
 new(Head);
 Head^.ADR:=nil;
 temp:=Head;      {
