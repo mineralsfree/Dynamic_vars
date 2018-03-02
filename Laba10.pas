@@ -45,8 +45,8 @@ var
 begin
 new(Head);
 Head^.ADR:=nil;
-temp:=Head;
-{for I := 1 to 5 do
+{temp:=Head;
+for I := 1 to 5 do
   begin
   New(temp^.ADR);         //Выделяем место в памяти
   temp:=temp^.ADR;
@@ -54,7 +54,7 @@ temp:=Head;
   temp^.INF.orderNum:='pizdec'+IntToStr(i);
   end;        }
  // stringgr
-temp:=Head;
+{temp:=Head;
 i:=0;
  while temp^.ADR<>nil do
  begin
@@ -63,7 +63,7 @@ i:=0;
   strngrd1.Cells[i,1]:=temp^.INF.orderNum;
 
   //ShowMessage(temp^.INF.orderNum);
-  end;
+  end;     }
   strngrd1.Cells[1,0]:='Расчёт';
 
 end;
@@ -72,12 +72,11 @@ procedure TForm1.okay(Sender: TObject);
 var
   I: Integer;
 begin
- i:=1;
  temp:=Head^.ADR;
  while temp<>nil do
  begin
- Inc(i);
-  strngrd1.Cells[i,i]:=temp^.INF.orderNum;
+  strngrd1.Cells[2,strngrd1.RowCount-1]:=temp^.INF.orderNum;
+   strngrd1.RowCount:= strngrd1.RowCount+1;
   temp:=temp^.ADR;
   //ShowMessage(temp^.INF.orderNum);
   end;
@@ -96,7 +95,7 @@ temp:=head;
  New(temp^.ADR);         //Выделяем место в памяти
   temp:=temp^.ADR;
   temp^.ADR:=nil;
-value:=InputBox('Insert string','pls insert data','02.03.2018');
+value:=InputBox('Insert string','pls insert data','kek');
 temp^.INF.orderNum:=value;
 strngrd1.cells[Acol,Arow]:=temp^.INF.orderNum;
 
