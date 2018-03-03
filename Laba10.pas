@@ -36,8 +36,6 @@ type
 
 
 
-
-
    TForm1 = class(TForm)
     mm1: TMainMenu;
     invoices1: TMenuItem;
@@ -61,9 +59,10 @@ type
 
 var
   mode:Tmode;
-  Head, temp:INVOICEADR;
+  Invhead, Invtemp:INVOICEADR;
+  ordhead,ordtemp:ORDERLISTADR;
   f: file of TINVOICESINF;
-  temp2:INVOICEADR;
+  invtemp2:INVOICEADR;
   Form1: TForm1;
 
 implementation
@@ -73,46 +72,49 @@ procedure InvoicesWrite(strngrd1:TStringGrid);
 begin
 strngrd1.RowCount:=2;
 strngrd1.ColCount:=3;
- temp:=Head^.ADR;
+ Invtemp:=invhead^.ADR;
 
- while temp<>nil do
+  while invtemp <> nil do
  begin
-  strngrd1.Cells[0,strngrd1.RowCount-1]:=temp^.INF.orderNum;
-  strngrd1.Cells[1,strngrd1.RowCount-1]:=DateToStr(temp^.INF.orderDate);
-  strngrd1.Cells[2,strngrd1.RowCount-1]:=temp^.INF.cutomerReq;
+  strngrd1.Cells[0,strngrd1.RowCount-1]:=invtemp^.INF.orderNum;
+  strngrd1.Cells[1,strngrd1.RowCount-1]:=DateToStr(invtemp^.INF.orderDate);
+  strngrd1.Cells[2,strngrd1.RowCount-1]:=invtemp^.INF.cutomerReq;
    strngrd1.RowCount:= strngrd1.RowCount+1;
-  temp:=temp^.ADR;
+  invtemp:=invtemp^.ADR;
 end;
 end;
 procedure OrderWrite(strngrd1:TStringGrid);
 begin
 strngrd1.RowCount:=2;
 strngrd1.ColCount:=3;
- temp:=Head^.ADR;
+strngrd1.Cells[0,0]:='Order num';
+strngrd1.Cells[1,0]:='Order date';
+strngrd1.Cells[2,0]:='Customer Requisites';
+ invtemp:=invhead^.ADR;
 
- while temp<>nil do
+ while invtemp<>nil do
  begin
-  strngrd1.Cells[0,strngrd1.RowCount-1]:=temp^.INF.orderNum;
-  strngrd1.Cells[1,strngrd1.RowCount-1]:=DateToStr(temp^.INF.orderDate);
-  strngrd1.Cells[2,strngrd1.RowCount-1]:=temp^.INF.cutomerReq;
+  strngrd1.Cells[0,strngrd1.RowCount-1]:=invtemp^.INF.orderNum;
+  strngrd1.Cells[1,strngrd1.RowCount-1]:=DateToStr(invtemp^.INF.orderDate);
+  strngrd1.Cells[2,strngrd1.RowCount-1]:=invtemp^.INF.cutomerReq;
    strngrd1.RowCount:= strngrd1.RowCount+1;
-  temp:=temp^.ADR;
+  invtemp:=invtemp^.ADR;
 end;
 end;
 
 procedure TForm1.btn1Click(Sender: TObject);
 begin
-  temp:=Head;
- while temp^.ADR<>nil do
- temp:=temp^.ADR;           //scroll to free space
+  invtemp:=invhead;
+ while invtemp^.ADR<>nil do
+ invtemp:=invtemp^.ADR;           //scroll to free space
 
-  New(temp^.ADR);         //Âûהוכÿול לוסעמ ג ןאלÿעט
-  temp:=temp^.ADR;
-  temp^.ADR:=nil;
-  temp^.INF.orderNum:=InputBox('InsertNum','Please, insert num of the order','635421');
-  temp^.INF.orderDate:=VarToDateTime(InputBox
+  New(invtemp^.ADR);         //Âûהוכÿול לוסעמ ג ןאלÿעט
+  invtemp:=invtemp^.ADR;
+  invtemp^.ADR:=nil;
+  invtemp^.INF.orderNum:=InputBox('InsertNum','Please, insert num of the order','635421');
+  invtemp^.INF.orderDate:=VarToDateTime(InputBox
   ('InsertDate','Insert Date','03.03.2018'));
-  temp^.INF.cutomerReq:=InputBox('InsertReq','Insert Customer requisites','2281488');
+  invtemp^.INF.cutomerReq:=InputBox('InsertReq','Insert Customer requisites','2281488');
   btn2.Visible:=True;
 end;
 
@@ -122,7 +124,7 @@ begin
  //  if mode = invoices then
       //listType:=
    InvoicesWrite(strngrd1);
-  //ShowMessage(temp^.INF.orderNum);
+  //ShowMessage(invtemp^.INF.orderNum);
   end;
 
 
@@ -131,27 +133,9 @@ var
   I: Integer;
 begin
 btn2.Visible:=False;
-new(Head);
-Head^.ADR:=nil;
-temp:=Head;      {
-for I := 1 to 5 do
-  begin
-  New(temp^.ADR);         //Âûהוכÿול לוסעמ ג ןאלÿעט
-  temp:=temp^.ADR;
-  temp^.ADR:=nil;
-  temp^.INF.orderNum:='pizdec'+IntToStr(i);
-  end;        }
- // stringgr
-{temp:=Head;
-i:=0;
- while temp^.ADR<>nil do
- begin
- Inc(i);
-   temp:=temp^.ADR;
-  strngrd1.Cells[i,1]:=temp^.INF.orderNum;
-
-  //ShowMessage(temp^.INF.orderNum);
-  end;     }
+new(invhead);
+invhead^.ADR:=nil;
+invtemp:=invhead;
   strngrd1.Cells[0,0]:='Order num';
   strngrd1.Cells[1,0]:='Order date';
   strngrd1.Cells[2,0]:='Customer Requisites';
@@ -179,16 +163,18 @@ procedure TForm1.strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
 
 begin
 strngrd1.MouseToCell(X,Y,Acol,Arow);
-//temp:=head;
-  New(temp^.ADR);         //Âûהוכÿול לוסעמ ג ןאלÿעט
-  temp:=temp^.ADR;
-  temp^.ADR:=nil;
+//invtemp:=invhead;
+  New(invtemp^.ADR);         //Âûהוכÿול לוסעמ ג ןאלÿעט
+  invtemp:=invtemp^.ADR;
+  invtemp^.ADR:=nil;
 value:=InputBox('Insert string','pls insert data','kek');
-temp^.INF.orderNum:=value;
-strngrd1.cells[Acol,Arow]:=temp^.INF.orderNum;
+invtemp^.INF.orderNum:=value;
+strngrd1.cells[Acol,Arow]:=invtemp^.INF.orderNum;
 
 
 end;
 
 
-end.
+end.invinvtemp
+
+
