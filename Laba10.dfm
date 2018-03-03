@@ -34,15 +34,6 @@ object Form1: TForm1
     TabOrder = 1
     OnClick = btnAddClick
   end
-  object btnWrite: TButton
-    Left = 272
-    Top = 304
-    Width = 75
-    Height = 25
-    Caption = 'Write'
-    TabOrder = 2
-    OnClick = btnWriteClick
-  end
   object mm1: TMainMenu
     object invoices1: TMenuItem
       Caption = 'invoices'
