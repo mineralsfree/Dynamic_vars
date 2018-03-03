@@ -12,7 +12,6 @@ object Form1: TForm1
   Font.Style = []
   Menu = mm1
   OldCreateOrder = False
-  OnClick = okay
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -51,6 +50,7 @@ object Form1: TForm1
     end
     object priceList1: TMenuItem
       Caption = 'priceList'
+      OnClick = priceList1Click
     end
   end
 end
