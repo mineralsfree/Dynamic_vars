@@ -117,8 +117,6 @@ procedure ordListCreate(I:Integer; strngrd1:TStringGrid; ordnum:string);
     while (invtemp^.ADR<>nil) or  (invtemp^.INF.orderNum<>ordnum) do
     begin
     if (invtemp^.INF.orderNum=ordnum) then        Exit;
-
-    ShowMessage(invtemp^.INF.orderNum);
     invtemp:=invtemp^.ADR;   // head of Order
     end;
                                  //Next block
@@ -218,4 +216,10 @@ if Acol = 0 then
 end;
 end.
 
+{
+  сделать две доп колонки для заказа - добавить и посмотреть товары
+  соответственно изменить процедуру отрисовки списка товаров
 
+
+
+}
