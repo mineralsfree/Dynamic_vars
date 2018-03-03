@@ -40,15 +40,15 @@ type
     mm1: TMainMenu;
     invoices1: TMenuItem;
     strngrd1: TStringGrid;
-    btn1: TButton;
-    btn2: TButton;
+    btnAdd: TButton;
+    btnWrite: TButton;
     priceList1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure okay(Sender: TObject);
     procedure strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure btn1Click(Sender: TObject);
-    procedure btn2Click(Sender: TObject);
+    procedure btnAddClick(Sender: TObject);
+    procedure btnWriteClick(Sender: TObject);
     procedure invoices1Click(Sender: TObject);
  //   procedure InvoicesWrite(strngrd1:TStringGrid);
   private
@@ -102,12 +102,11 @@ strngrd1.Cells[2,0]:='Customer Requisites';
 end;
 end;
 
-procedure TForm1.btn1Click(Sender: TObject);
+procedure TForm1.btnAddClick(Sender: TObject);
 begin
   invtemp:=invhead;
  while invtemp^.ADR<>nil do
  invtemp:=invtemp^.ADR;           //scroll to free space
-
   New(invtemp^.ADR);         //Âûהוכÿול לוסעמ ג ןאלÿעט
   invtemp:=invtemp^.ADR;
   invtemp^.ADR:=nil;
@@ -115,16 +114,13 @@ begin
   invtemp^.INF.orderDate:=VarToDateTime(InputBox
   ('InsertDate','Insert Date','03.03.2018'));
   invtemp^.INF.cutomerReq:=InputBox('InsertReq','Insert Customer requisites','2281488');
-  btn2.Visible:=True;
+  btnWrite.Visible:=True;
 end;
 
-procedure TForm1.btn2Click(Sender: TObject);
+procedure TForm1.btnWriteClick(Sender: TObject);
 var listType: INVOICEADR;
 begin
- //  if mode = invoices then
-      //listType:=
    InvoicesWrite(strngrd1);
-  //ShowMessage(invtemp^.INF.orderNum);
   end;
 
 
@@ -132,13 +128,11 @@ procedure TForm1.FormCreate(Sender: TObject);
 var
   I: Integer;
 begin
-btn2.Visible:=False;
+btnWrite.Visible:=False;
 new(invhead);
 invhead^.ADR:=nil;
 invtemp:=invhead;
-  strngrd1.Cells[0,0]:='Order num';
-  strngrd1.Cells[1,0]:='Order date';
-  strngrd1.Cells[2,0]:='Customer Requisites';
+OrderWrite(strngrd1);
 end;
 
 procedure TForm1.invoices1Click(Sender: TObject);

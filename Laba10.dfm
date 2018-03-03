@@ -26,23 +26,23 @@ object Form1: TForm1
     TabOrder = 0
     OnMouseUp = strngrd1MouseUp
   end
-  object btn1: TButton
+  object btnAdd: TButton
     Left = 472
     Top = 279
     Width = 129
     Height = 50
     Caption = 'Add_new_list'
     TabOrder = 1
-    OnClick = btn1Click
+    OnClick = btnAddClick
   end
-  object btn2: TButton
+  object btnWrite: TButton
     Left = 272
     Top = 304
     Width = 75
     Height = 25
     Caption = 'Write'
     TabOrder = 2
-    OnClick = btn2Click
+    OnClick = btnWriteClick
   end
   object mm1: TMainMenu
     object invoices1: TMenuItem
