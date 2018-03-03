@@ -47,6 +47,10 @@ object Form1: TForm1
   object mm1: TMainMenu
     object invoices1: TMenuItem
       Caption = 'invoices'
+      OnClick = invoices1Click
+    end
+    object priceList1: TMenuItem
+      Caption = 'priceList'
     end
   end
 end
