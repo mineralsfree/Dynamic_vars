@@ -1,0 +1,65 @@
+unit UPriceList;
+
+interface
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.Grids, Vcl.StdCtrls;
+ type
+  PricelistINF = record
+   orderNum: string[10];
+   orderDate:TDateTime;
+   cutomerReq:string[12];
+   end;
+   PriceListADR=^TSP3;
+    TSP3= record
+    INF: PricelistINF;
+    ADR: PriceListADR;
+    end;
+
+
+
+
+  implementation
+   procedure Writelist(const Head:PriceListADR; Filename:string);
+   var
+   Temp:PricelistADR;
+   Info:PricelistINF;
+
+   TInfo:PricelistINF;
+   f: file of PriceListINF;
+   begin
+   AssignFile(f,'FileName');
+   Reset(f);
+    Head^.ADR:=nil;
+    temp:=Head;
+
+   while not(Eof) do
+   begin
+     read(f,TInfo);
+     new(Temp^.adr);
+     Temp:=Temp^.ADR;
+     Temp.ADR:=nil;
+     temp.INF:=TInfo;
+   end;
+   Close(f);
+   end;
+
+   procedure readPriceList(const Head:PriceListADR; Filename:string);
+   var
+   Temp:PricelistADR;
+   f: file of PriceListINF;
+   begin
+   AssignFile(f,'FileName');
+   Reset(f);
+   Seek(f,Filesize(f));
+   temp:=Head^.ADR;
+   while Temp^.ADR<>0 do
+   begin
+     write(f,Temp.INF);
+     Temp:=Temp^.ADR;
+   end;
+   Close(f);
+   end;
+
+
+end.

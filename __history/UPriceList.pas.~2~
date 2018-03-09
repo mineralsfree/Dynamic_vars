@@ -1,0 +1,21 @@
+unit UPriceList;
+
+interface
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.Grids, Vcl.StdCtrls;
+ type
+  PricelistINF = record
+   orderNum: string[10];
+   orderDate:TDateTime;
+   cutomerReq:string[12];
+   end;
+   PriceListADR=^TSP3;
+    TSP3= record
+    INF: PricelistINF;
+    ADR: PriceListADR;
+    end;
+
+  implementation
+
+end.

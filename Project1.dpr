@@ -2,7 +2,10 @@ program Project1;
 
 uses
   Vcl.Forms,
-  Laba10 in 'Laba10.pas' {Form1};
+  OnCreate in 'OnCreate.pas' {Form1},
+  UOrdList in 'UOrdList.pas',
+  UPriceList in 'UPriceList.pas',
+  Unit1 in 'Unit1.pas';
 
 {$R *.res}
 
