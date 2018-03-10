@@ -122,7 +122,7 @@ uses
     Grid.RowCount:= Grid.RowCount-1;
     end;
 
-    function ObjAdrOf(head: PriceListADR; name: string):PriceListADR;
+    function ObjAdrOf(const head: PriceListADR; name: string):PriceListADR;
   var
   temp: PricelistADR;
   begin
@@ -136,7 +136,6 @@ uses
       temp := temp^.Adr;
     end;
   end;
-
 
     procedure deletePriceList(const head:PriceListADR; productcode:Integer);
     var
@@ -157,19 +156,4 @@ uses
     end;
     end;
 
-
-
-
 end.
-
-
-
-
-     {temp2:=temp.ADR;
-    while (temp2^.INF.productcode<>IntToStr(productcode)) do
-      begin
-      temp2:=temp^.ADR;
-      temp:=temp^.ADR;
-      end;
-      temp^.ADR:=temp2^.adr;
-      Dispose(temp2);      }

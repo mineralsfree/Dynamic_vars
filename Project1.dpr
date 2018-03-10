@@ -5,7 +5,7 @@ uses
   OnCreate in 'OnCreate.pas' {Form1},
   UOrdList in 'UOrdList.pas',
   UPriceList in 'UPriceList.pas',
-  Unit1 in 'Unit1.pas';
+  UProductList in 'UProductList.pas';
 
 {$R *.res}
 
@@ -15,3 +15,4 @@ begin
   Application.CreateForm(TForm1, Form1);
   Application.Run;
 end.
+

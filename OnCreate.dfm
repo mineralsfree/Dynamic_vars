@@ -57,7 +57,6 @@ object Form1: TForm1
       end
       object Invoice1: TMenuItem
         Caption = 'Invoice'
-        OnClick = Invoice1Click
       end
       object Naklodnaya1: TMenuItem
         Caption = 'Naklodnaya'
