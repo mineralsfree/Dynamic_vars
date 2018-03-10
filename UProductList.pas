@@ -6,8 +6,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.Grids,
   Vcl.StdCtrls,UOrdList,UPriceList;
 
-
-
+  procedure saveProductList(const mainHead:OrdListADR;Filename:string);
+ procedure readproductlist(const mainHead:OrdListADR;Filename:string);
   procedure ProductsWrite(const OrdListHead:ordListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
  procedure InsertProductList(const OrdListHead:ordListADR; const Pricehead:PriceListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
 implementation
@@ -20,32 +20,28 @@ var
   name:string;
   begin
 
-  OrdListTemp:=OrdListHead^.ADR;
+   OrdListTemp:=OrdListHead^.ADR;
     while (OrdListTemp^.INF.orderNum<>ordnum) do
       OrdListTemp:=OrdListTemp^.ADR;   // head of Order
     Ptemp:=OrdListTemp^.HADR;
     while PTemp^.ADR<>nil do
       PTemp:=PTemp^.ADR;
-    New(Ptemp^.ADR);
-    Ptemp:=Ptemp^.ADR;
-    Ptemp^.ADR:=nil;
-    Ptemp^.INF.orderNum:= ordnum;
-   name:=InputBox('InsertName','Insert Name','Blin');
+    name:=InputBox('InsertName','Insert Name','Blin');
     if ObjAdrOfname(PriceHead, name)<>nil then
-     Ptemp^.INF.productName:=name
-     else
-     begin
-     ShowMessage('Add such a product into PriceList');
-     Exit
-     end;
-    Ptemp^.INF.productQuantity:=StrToInt(InputBox
-    ('InsertQuantity','Insert Quantity',IntToStr(Random(10)+1)));
+      begin
+      New(Ptemp^.ADR);
+      Ptemp:=Ptemp^.ADR;
+      Ptemp^.ADR:=nil;
+      Ptemp^.INF.orderNum:= ordnum;
+      Ptemp^.INF.productName:=name;
+      Ptemp^.INF.productQuantity:=StrToInt(InputBox
+       ('InsertQuantity','Insert Quantity',IntToStr(Random(10)+1)));
+      end
+    else
+      begin
+      ShowMessage('Add such a product into PriceList');
+      end;
 
-
-
-
-    //orderwrite(n,strngrd1,ordnum);
-   // OrderWrite(strngrd1);
   end;
   procedure ProductsWrite(const OrdListHead:ordListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
   var i:Integer;
@@ -74,7 +70,80 @@ var
   end;
   strngrd1.RowCount:= strngrd1.RowCount-1;
   end;
+  procedure readproductlist(const mainHead:OrdListADR;Filename:string);
+    var
+   mainTemp:ordlistADR;
+   temp:ProdListADR;
+   TInfo:ProductlistINF;
+   f: file of ProductlistINF;
+   begin
+    assignFile(f,'ProductList.brakhmen');
+   if fileExists('ProductList.brakhmen') then
+     begin
+     Reset(f);
+     //mainHead^.ADR:=nil;
+     maintemp:=mainHead^.ADR;
+     {temp:=maintemp^.HADR;
+          temp^.ADR:=nil;
+               temp:=temp^.ADR;}
+      if not(Eof(f)) then read(f,TInfo)
+      else exit;
+     while not(Eof(f)) do
+      begin
+     temp:=maintemp^.HADR;
+     //temp^.ADR:=nil;
+     //temp:=temp^.ADR;
 
+     while  TInfo.orderNum= maintemp.INF.orderNum do
+     begin
+       new(Temp^.adr);
+       Temp:=Temp^.ADR;
+       Temp.ADR:=nil;
+       temp.INF:=TInfo;
+      if not(Eof(f)) then read(f,TInfo)
+      else exit;
+
+     end;
+      maintemp:=mainTemp^.ADR;
+     end;
+     end
+     else
+     begin
+       Rewrite(f);
+       ShowMessage('No such file or directiory');
+       readproductlist(mainHead,Filename);
+     end;
+     close(f)
+   end;
+  procedure saveProductList(const mainHead:OrdListADR;Filename:string);
+   var
+   Maintemp:OrdListADR;
+   Temp:ProdlistADR;
+   f: file of ProductlistINF;
+   begin
+   AssignFile(f,'ProductList.brakhmen');
+   Rewrite(f);
+   Seek(f,Filesize(f));
+     if mainHead.ADR<>nil then
+       begin
+       maintemp:=mainHead.ADR;
+       while mainTemp<> nil do
+         begin
+           if Maintemp^.HADR.ADR<>nil then
+           begin
+           temp:=maintemp^.HADR.ADR;
+           while Temp<> nil do
+             begin
+               write(f,Temp.INF);
+               Temp:=Temp^.ADR;
+             end;
+           end;                                 {write(f,Temp.INF); }
+           mainTemp:=mainTemp^.ADR;
+
+       end;
+     Close(f);
+     end;
+   end;
 end.
 
 

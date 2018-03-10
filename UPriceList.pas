@@ -34,9 +34,9 @@ uses
    f: file of PriceListINF;
    begin
 
-   if fileExists(FileName) then
+   if fileExists('priceList.brakhmen') then
      begin
-       AssignFile(f,FileName);
+       AssignFile(f,'priceList.brakhmen');
      Reset(f);
      Head^.ADR:=nil;
      temp:=Head;
@@ -53,7 +53,7 @@ uses
      begin
        Rewrite(f);
        ShowMessage('No such file or directiory');
-       readPricelist(Head,Filename);
+       readPricelist(Head,'priceList.brakhmen');
      end;
      close(f)
    end;
@@ -114,8 +114,7 @@ uses
       ShowMessage('Error!' +#10#13+ 'Redeclaration of product or same productCode');
       Exit;
      end;
-     temp.INF.productPrice:=StrToInt
-     (InputBox('Enter price for 1 unit','Price: ',inttostr(1000)));
+     temp.INF.productPrice:=StrToInt(InputBox('Enter price for 1 unit','Price: ',inttostr(1000)));
 
    end;
 
@@ -192,10 +191,8 @@ uses
     function getPrice(const head:PriceListADR; name:string):Integer;
     var temp:PriceListADR;
     begin
-
       temp:=ObjAdrOfname(head,name);
       result:=temp^.INF.productPrice;
-
     end;
 
 end.

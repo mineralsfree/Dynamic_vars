@@ -31,7 +31,6 @@ implementation
     Grid.Cells[1,0]:='Product Name';
     Grid.Cells[2,0]:='Product Price';
     Grid.Cells[3,0]:='Delete';
-
     temp:=head^.ADR;
     while temp<>nil do
     begin

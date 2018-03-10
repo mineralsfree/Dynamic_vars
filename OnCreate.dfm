@@ -16,12 +16,12 @@ object Form1: TForm1
   PixelsPerInch = 96
   TextHeight = 13
   object strngrd1: TStringGrid
-    Left = 16
+    Left = 8
     Top = 0
     Width = 929
     Height = 281
     ColCount = 4
-    DefaultColWidth = 150
+    DefaultColWidth = 125
     TabOrder = 0
     OnMouseUp = strngrd1MouseUp
   end
@@ -41,7 +41,6 @@ object Form1: TForm1
     Height = 49
     Caption = 'Create Invoice'
     TabOrder = 2
-    OnClick = btn1Click
   end
   object mm1: TMainMenu
     Top = 8

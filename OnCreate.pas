@@ -22,31 +22,23 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure btnAddClick(Sender: TObject);
     procedure priceList1Click(Sender: TObject);
-
     procedure save1Click(Sender: TObject);
     procedure OrdList1Click(Sender: TObject);
-    procedure btn1Click(Sender: TObject);
 
   private
     { Private declarations }
   public
     { Public declarations }
-  end;
-
+      end;
 var
   mode:Tmode;
-  OrderHead, Invtemp:OrdlistADR;
-  Form1: TForm1;
+  OrderHead:OrdlistADR;
   Pricehead:PricelistADR;
+  Form1: TForm1;
 implementation
 
 {$R *.dfm}
 
-procedure TForm1.btn1Click(Sender: TObject);
-begin
-ShowMessage('Input order num');
-
-end;
 
 procedure TForm1.btnAddClick(Sender: TObject);
 begin
@@ -71,13 +63,16 @@ begin
 btn1.Visible:=False;
 new(OrderHead);
 OrderHead^.ADR:=nil;
-OrderHead^.HADR:=nil;      //////////////////////////
-invtemp:=OrderHead;
-//btnAdd.Visible:=false;
+OrderHead^.HADR:=nil;
+
+readOrdlist(OrderHead,'OrdList.brakmen');
+readproductlist(OrderHead,'ProductList.brakhmen');
 OrdWrite(OrderHead, strngrd1);
+
 new(Pricehead);
  Pricehead^.ADR:=nil;
  ReadPriceList(Pricehead,'priceList.brakhmen');
+
 end;
 
 procedure TForm1.OrdList1Click(Sender: TObject);
@@ -95,8 +90,19 @@ end;
 
 procedure TForm1.save1Click(Sender: TObject);
 begin
-savePricelist(Pricehead,'priceList.brakhmen');
-ShowMessage('Saved');
+case mode of
+  priceList:
+  begin
+  savePricelist(Pricehead,'priceList.brakhmen');
+  ShowMessage('Saved');
+  end;
+  ordList:
+  begin
+    saveOrdList(OrderHead);
+    saveProductList(OrderHead,'kek.brakhmen');
+    ShowMessage('OrdList and prodlist saved');
+  end;
+end;
 end;
 
 procedure TForm1.strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
@@ -133,6 +139,12 @@ case mode of
     sordnum:=Trim(strngrd1.Cells[0,Arow]);
     makeNaklodnayaGreatAgain(OrderHead,Pricehead,Arow,strngrd1,sordnum);
     end;
+    if  Acol = 6 then
+    begin
+    sordnum:=Trim(strngrd1.Cells[0,Arow]);
+    DeleteOrdList(OrderHead,sordnum);
+    OrdWrite(OrderHead,strngrd1);
+    end
 
   end;
 
