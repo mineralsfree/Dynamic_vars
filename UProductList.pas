@@ -5,7 +5,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.Grids,
   Vcl.StdCtrls,UOrdList,UPriceList;
-
+       procedure Deleteproduct(const mainhead:OrdListADR;orderq:Integer; productname:string;n:Integer);
   procedure saveProductList(const mainHead:OrdListADR;Filename:string);
  procedure readproductlist(const mainHead:OrdListADR;Filename:string);
   procedure ProductsWrite(const OrdListHead:ordListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
@@ -49,10 +49,11 @@ var
   Ptemp:prodlistadr;
   begin
   strngrd1.RowCount:=2;
-  strngrd1.ColCount:=3;
+  strngrd1.ColCount:=4;
   strngrd1.Cells[0,0]:='Order num';
   strngrd1.Cells[1,0]:='Product name';
   strngrd1.Cells[2,0]:='Quantity';
+   strngrd1.Cells[3,0]:='Delete';
   OrdListTemp:=OrdListHead;
       for i := 1 to n do
       begin
@@ -65,6 +66,7 @@ var
     strngrd1.Cells[0,strngrd1.RowCount-1]:=ordNum;
     strngrd1.Cells[1,strngrd1.RowCount-1]:=(Ptemp^.INF.productName);
     strngrd1.Cells[2,strngrd1.RowCount-1]:=IntToStr(Ptemp^.INF.productQuantity);
+    strngrd1.Cells[3,strngrd1.RowCount-1]:='-';
      strngrd1.RowCount:= strngrd1.RowCount+1;
   Ptemp:=Ptemp^.ADR;
   end;
@@ -144,6 +146,39 @@ var
      Close(f);
      end;
    end;
+
+   procedure Deleteproduct(const mainhead:OrdListADR;orderq:Integer; productname:string;n:Integer);
+    var
+    OrdListTemp:ordListADR;
+    temp:ProdListADR;
+    temp2:ProdListADR;
+    i:integer;
+    begin
+     OrdListTemp:=mainhead;
+      for i := 1 to n do
+      begin
+      OrdListTemp:=OrdListTemp^.ADR;   // head of Order
+      end;
+      temp:=OrdListTemp^.HADR;
+    while (temp^.ADR<>nil) do
+    begin
+       temp2:=temp^.ADR;
+    if (temp2^.INF.productQuantity = orderq) and (temp2^.INF.productName=productname)then
+    begin
+      temp^.ADR:=temp2^.adr;
+      Dispose(temp2);
+      Exit;
+    end
+    else
+    temp:=temp^.ADR;
+    end;
+    end;
+    function getPrice(const head:PriceListADR; name:string):Integer;
+    var temp:PriceListADR;
+    begin
+      temp:=ObjAdrOfname(head,name);
+      result:=temp^.INF.productPrice;
+    end;
 end.
 
 

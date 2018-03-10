@@ -8,7 +8,7 @@ uses
    Vcl.Dialogs, Vcl.Menus, Vcl.Grids, Vcl.StdCtrls,UPriceList,
    UOrdList,UProductList,Invoice;
 type
-  Tmode = (ordList,priceList,naclodnaya);
+  Tmode = (ordList,priceList,naclodnaya,prodlist);
    TForm1 = class(TForm)
     strngrd1: TStringGrid;
     btnAdd: TButton;
@@ -31,9 +31,11 @@ type
     { Public declarations }
       end;
 var
+  k:Integer;
   mode:Tmode;
   OrderHead:OrdlistADR;
   Pricehead:PricelistADR;
+  DeleteHead:ProdListADR;
   Form1: TForm1;
 implementation
 
@@ -110,15 +112,19 @@ procedure TForm1.strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
   var i,Acol,Arow:Integer;
   var ordnum:integer;
   var sordnum:string;
+  var prodname:string;
+
 begin
 strngrd1.MouseToCell(X,Y,Acol,Arow);
 case mode of
   priceList:
   begin
    if Acol = 3 then
+   begin
    ordnum:=strtoint(strngrd1.Cells[0,Arow]);
    deletePriceList(Pricehead,ordnum);
    writePriceList(Pricehead,strngrd1);
+   end;
   end;
 
   ordList:
@@ -130,7 +136,9 @@ case mode of
     end;
   if  Acol = 4 then
     begin
+    mode:=prodlist;
     sordnum:=Trim(strngrd1.Cells[0,Arow]);
+    k:=Arow;
     ProductsWrite(OrderHead,Arow,strngrd1,sordnum);
     end;
 
@@ -145,8 +153,20 @@ case mode of
     DeleteOrdList(OrderHead,sordnum);
     OrdWrite(OrderHead,strngrd1);
     end
-
   end;
+  prodlist:
+    begin
+      if Acol = 3 then
+      begin
+      ordnum:=StrToInt(strngrd1.Cells[2,Arow]);
+      sordnum:=IntToStr(ordnum);
+      prodname:=strngrd1.Cells[1,Arow];
+      Deleteproduct(OrderHead,ordnum,prodname,k);
+      ProductsWrite(OrderHead,k,strngrd1,strngrd1.Cells[0,Arow]);
+
+      end;
+
+    end;
 
 end;
 end;
