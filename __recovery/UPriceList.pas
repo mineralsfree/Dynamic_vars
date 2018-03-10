@@ -15,18 +15,19 @@ uses
     INF: PricelistINF;
     ADR: PriceListADR;
     end;
-     procedure deletePriceList(const head:PriceListADR; productcode:Integer; grd:TStringGrid;arow:Integer);
+     procedure deletePriceList(const head:PriceListADR; productcode:Integer);
 
     procedure insertPriceList(const head:PriceListADR; productCode:Integer);
     procedure writePriceList (const head:PriceListADR; Grid:TStringGrid);
     procedure SavePricelist(const Head:PriceListADR; Filename:string);
     procedure readPriceList(const Head:PriceListADR; Filename:string);
   implementation
+
+
    procedure readPricelist(const Head:PriceListADR; Filename:string);
    var
    Temp:PricelistADR;
    Info:PricelistINF;
-
    TInfo:PricelistINF;
    f: file of PriceListINF;
    begin
@@ -34,7 +35,7 @@ uses
    if fileExists(FileName) then
      begin
        AssignFile(f,FileName);
-
+     Rewrite(f);
      Reset(f);
      Head^.ADR:=nil;
      temp:=Head;
@@ -43,9 +44,8 @@ uses
        read(f,TInfo);
        new(Temp^.adr);
        Temp:=Temp^.ADR;
-       temp.INF:=TInfo;
        Temp.ADR:=nil;
-
+       temp.INF:=TInfo;
      end;
      end
      else
@@ -64,18 +64,22 @@ uses
    AssignFile(f,'priceList.brakhmen');
    Rewrite(f);
    Seek(f,Filesize(f));
-   temp:=Head.ADR;
-   while Temp<> nil do
-   begin
-     write(f,Temp.INF);
-     Temp:=Temp^.ADR;
-   end;
+   if Head.ADR<>nil then
+     begin
+     temp:=Head.ADR;
+     while Temp<> nil do
+       begin
+         write(f,Temp.INF);
+         Temp:=Temp^.ADR;
+       end;
+     end;
    Close(f);
    end;
 
    procedure insertPriceList(const head:PriceListADR; productCode:Integer);
    var
    temp:PriceListADR;
+   temp2:PriceListADR;
    content:PricelistINF;
    begin
      temp:=head;
@@ -90,8 +94,8 @@ uses
      temp.INF.productName:=InputBox
      ('Enter product name' ,'Product name:', 'Shit from ass');
      temp.INF.productPrice:=StrToInt
-     (InputBox('Enter price for 1 unit','Price: ','354'));
-     temp^.ADR:=nil;
+     (InputBox('Enter price for 1 unit','Price: ',inttostr(Random(354)+1)));
+
    end;
 
     procedure writePriceList (const head:PriceListADR; Grid:TStringGrid);
@@ -117,30 +121,56 @@ uses
     end;
     Grid.RowCount:= Grid.RowCount-1;
     end;
-    procedure deletePriceList(const head:PriceListADR; productcode:Integer; grd:TStringGrid;arow:Integer);
+
+    function ObjAdrOf(head: PriceListADR; name: string):PriceListADR;
+  var
+  temp: PricelistADR;
+  begin
+    temp := head;
+    Result := nil;
+    while(temp <> nil) do
+    begin
+      //ShowMessage(name + ' / ' + temp^.Info.obType);
+      if temp^.INF.productCode = name then
+        Result:=temp;
+      temp := temp^.Adr;
+    end;
+  end;
+
+
+    procedure deletePriceList(const head:PriceListADR; productcode:Integer);
     var
     temp: PriceListADR;
-    reserve:PriceListADR;
+    temp2:PriceListADR;
     begin
-    temp:=head;
+     temp:=head;
     while (temp^.ADR<>nil) do
     begin
-        reserve:=temp^.ADR;
-    if (reserve^.INF.productCode = IntToStr(productcode)) then
+       temp2:=temp^.ADR;
+    if (temp2^.INF.productCode = IntToStr(productcode)) then
     begin
-      temp^.ADR:=reserve.adr;
-      Dispose(reserve);
-      grd.Cells[0,arow]:='';
-      grd.Cells[1,arow]:='';
-      grd.Cells[2,arow]:='';
-      //grd.RowCount:=grd.RowCount-1;
-      exit;
-    end;
-    temp:=reserve^.ADR;
 
-    writePriceList(head, grd);
+      temp^.ADR:=temp2^.adr;
+      Dispose(temp2);
+    end
+    else
+    temp:=temp2^.ADR;
     end;
     end;
+
+
 
 
 end.
+
+
+
+
+     {temp2:=temp.ADR;
+    while (temp2^.INF.productcode<>IntToStr(productcode)) do
+      begin
+      temp2:=temp^.ADR;
+      temp:=temp^.ADR;
+      end;
+      temp^.ADR:=temp2^.adr;
+      Dispose(temp2);      }
