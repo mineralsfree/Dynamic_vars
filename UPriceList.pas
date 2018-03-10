@@ -149,12 +149,11 @@ uses
        temp2:=temp^.ADR;
     if (temp2^.INF.productCode = IntToStr(productcode)) then
     begin
-
       temp^.ADR:=temp2^.adr;
       Dispose(temp2);
     end
     else
-    temp:=temp2^.ADR;
+    temp:=temp^.ADR;
     end;
     end;
 
