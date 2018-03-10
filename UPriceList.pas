@@ -15,8 +15,10 @@ uses
     INF: PricelistINF;
     ADR: PriceListADR;
     end;
-     procedure deletePriceList(const head:PriceListADR; productcode:Integer);
-
+     function getPrice(const head:PriceListADR; name:string):Integer;
+    function ObjAdrOfcode(const head: PriceListADR; name: string):PriceListADR;
+    procedure deletePriceList(const head:PriceListADR; productcode:Integer);
+    function ObjAdrOfname(const head: PriceListADR; name: string):PriceListADR;
     procedure insertPriceList(const head:PriceListADR; productCode:Integer);
     procedure writePriceList (const head:PriceListADR; Grid:TStringGrid);
     procedure SavePricelist(const Head:PriceListADR; Filename:string);
@@ -35,7 +37,6 @@ uses
    if fileExists(FileName) then
      begin
        AssignFile(f,FileName);
-     Rewrite(f);
      Reset(f);
      Head^.ADR:=nil;
      temp:=Head;
@@ -51,7 +52,8 @@ uses
      else
      begin
        Rewrite(f);
-       ShowMessage('No such file or directiory')
+       ShowMessage('No such file or directiory');
+       readPricelist(Head,Filename);
      end;
      close(f)
    end;
@@ -80,21 +82,40 @@ uses
    var
    temp:PriceListADR;
    temp2:PriceListADR;
-   content:PricelistINF;
+   name:string;
+   kek:Integer;
+   code:string;
    begin
+      kek:=10000001;
      temp:=head;
      while temp^.ADR<>nil do
-      temp:=temp^.ADR;
-
+     begin
+     temp:=temp^.ADR;
+     Inc(kek);
+     end;
+     code:=InputBox
+     ('Enter product code','product code:',IntToStr(kek));
+     name:=InputBox
+     ('Enter product name' ,'Product name:', 'Xiaomi redmi bomjbook '+IntToStr(kek-10000000)+' pro');
+     if ((objadrofname(head, name)=nil)
+     and  (objadrofcode(head, code)=nil))
+     and  (name<>'')
+     and (code<>'')
+     then
+     begin
       New(temp^.ADR);
       temp:=temp^.ADR;
       temp^.ADR:=nil;
-     temp.INF.productCode:=
-     InputBox('Enter product code','product code:',IntToStr(random(20000)+2));
-     temp.INF.productName:=InputBox
-     ('Enter product name' ,'Product name:', 'Shit from ass');
+      temp.INF.productName:=name;
+      temp.INF.productCode:=code;
+     end
+     else
+     begin
+      ShowMessage('Error!' +#10#13+ 'Redeclaration of product or same productCode');
+      Exit;
+     end;
      temp.INF.productPrice:=StrToInt
-     (InputBox('Enter price for 1 unit','Price: ',inttostr(Random(354)+1)));
+     (InputBox('Enter price for 1 unit','Price: ',inttostr(1000)));
 
    end;
 
@@ -122,7 +143,7 @@ uses
     Grid.RowCount:= Grid.RowCount-1;
     end;
 
-    function ObjAdrOf(const head: PriceListADR; name: string):PriceListADR;
+    function ObjAdrOfname(const head: PriceListADR; name: string):PriceListADR;
   var
   temp: PricelistADR;
   begin
@@ -130,7 +151,20 @@ uses
     Result := nil;
     while(temp <> nil) do
     begin
-      //ShowMessage(name + ' / ' + temp^.Info.obType);
+      if temp^.INF.productName = name then
+        Result:=temp;
+      temp := temp^.Adr;
+    end;
+  end;
+
+    function ObjAdrOfcode(const head: PriceListADR; name: string):PriceListADR;
+  var
+  temp: PricelistADR;
+  begin
+    temp := head;
+    Result := nil;
+    while(temp <> nil) do
+    begin
       if temp^.INF.productCode = name then
         Result:=temp;
       temp := temp^.Adr;
@@ -154,6 +188,14 @@ uses
     else
     temp:=temp^.ADR;
     end;
+    end;
+    function getPrice(const head:PriceListADR; name:string):Integer;
+    var temp:PriceListADR;
+    begin
+
+      temp:=ObjAdrOfname(head,name);
+      result:=temp^.INF.productPrice;
+
     end;
 
 end.

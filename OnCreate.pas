@@ -6,35 +6,27 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms,
    Vcl.Dialogs, Vcl.Menus, Vcl.Grids, Vcl.StdCtrls,UPriceList,
-   UOrdList,UProductList;
-
+   UOrdList,UProductList,Invoice;
 type
-  Tmode = (ordList,Ords,priceList,naclodnaya);
+  Tmode = (ordList,priceList,naclodnaya);
    TForm1 = class(TForm)
     strngrd1: TStringGrid;
     btnAdd: TButton;
     mm1: TMainMenu;
-    Listselection1: TMenuItem;
     save1: TMenuItem;
-    stth1: TMenuItem;
     PriceList1: TMenuItem;
     OrdList1: TMenuItem;
-    Naklodnaya1: TMenuItem;
     btn1: TButton;
     procedure FormCreate(Sender: TObject);
-
     procedure strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure btnAddClick(Sender: TObject);
     procedure priceList1Click(Sender: TObject);
-    procedure Ord1Click(Sender: TObject);
+
     procedure save1Click(Sender: TObject);
     procedure OrdList1Click(Sender: TObject);
     procedure btn1Click(Sender: TObject);
 
-
-//    procedure ordListCreate(I:Integer; strngrd1:TStringGrid);
- //   procedure OrdsWrite(strngrd1:TStringGrid);
   private
     { Private declarations }
   public
@@ -43,100 +35,62 @@ type
 
 var
   mode:Tmode;
-  Invhead, Invtemp:OrdlistADR;
+  OrderHead, Invtemp:OrdlistADR;
   Form1: TForm1;
   Pricehead:PricelistADR;
 implementation
 
 {$R *.dfm}
 
-
-
-
-
-
-
-
 procedure TForm1.btn1Click(Sender: TObject);
-var num:Integer;
 begin
-  num:=strtoint(inputbox('','','21'));
-  deletePriceList(Pricehead,num);
-  writePriceList(Pricehead,strngrd1);
+ShowMessage('Input order num');
 
 end;
 
 procedure TForm1.btnAddClick(Sender: TObject);
-
 begin
-
-if mode = priceList then
+ case mode of
+  priceList:
   begin
-
-  insertPriceList(Pricehead,Random(200));
+   insertPriceList(Pricehead,Random(200));
   writePriceList(Pricehead,strngrd1);
-
-  end
-else
-  begin
-  invtemp:=invhead;
-  while invtemp^.ADR<>nil do
-    invtemp:=invtemp^.ADR;           //scroll to free space
-  New(Invtemp^.ADR);
-         // //////////////////
-  //ordhead:=Invtemp^.HADR;   //  //////////////////
-  invtemp:=invtemp^.ADR;
-  New(Invtemp^.HADR);
-  Invtemp^.HADR.ADR:=nil;
-  invtemp^.ADR:=nil;
-
-  invtemp^.INF.orderNum:=InputBox('InsertNum','Please, insert num of the order',IntToStr(Random(1000000)));
-  invtemp^.INF.orderDate:=VarToDateTime(InputBox
-  ('InsertDate','Insert Date','03.03.'+IntToStr(Random(2018)+1)));
-  invtemp^.INF.cutomerReq:=InputBox('InsertReq','Insert Customer requisites','2281488');
-  OrdWrite(invhead, strngrd1);
   end;
+  ordList:
+  begin
+    OrdInsert(orderhead);
+    OrdWrite(OrderHead, strngrd1);
+  end;
+ end;
 end;
-
-
-
-
 
 procedure TForm1.FormCreate(Sender: TObject);
 var
   I: Integer;
 begin
-new(invhead);
-invhead^.ADR:=nil;
-invhead^.HADR:=nil;      //////////////////////////
-invtemp:=invhead;
+btn1.Visible:=False;
+new(OrderHead);
+OrderHead^.ADR:=nil;
+OrderHead^.HADR:=nil;      //////////////////////////
+invtemp:=OrderHead;
 //btnAdd.Visible:=false;
-OrdWrite(invhead, strngrd1);
-end;
-
-procedure TForm1.Ord1Click(Sender: TObject);
-begin
-mode:=Ords;
-btnAdd.Visible:=True;
-OrdWrite(invhead, strngrd1);
+OrdWrite(OrderHead, strngrd1);
+new(Pricehead);
+ Pricehead^.ADR:=nil;
+ ReadPriceList(Pricehead,'priceList.brakhmen');
 end;
 
 procedure TForm1.OrdList1Click(Sender: TObject);
 begin
 mode:=ordList;
-OrdWrite(invhead, strngrd1);
+OrdWrite(OrderHead, strngrd1);
 end;
 
 procedure TForm1.priceList1Click(Sender: TObject);
 begin
  mode:=priceList;
  btnAdd.Visible:=True;
- new(Pricehead);
- Pricehead^.ADR:=nil;
- readPriceList(Pricehead,'priceList.brakhmen');
  writePriceList(Pricehead,strngrd1);
-
- //OrderWrite(strngrd1);
 end;
 
 procedure TForm1.save1Click(Sender: TObject);
@@ -163,26 +117,25 @@ case mode of
 
   ordList:
   begin
-if Acol = 3 then
-  begin
-  sordnum:=strngrd1.Cells[0,Arow];
-  ReadProductList(invhead,Arow,strngrd1,sordnum);
+  if Acol = 3 then
+    begin
+    sordnum:=strngrd1.Cells[0,Arow];
+    InsertProductList(OrderHead,pricehead,Arow,strngrd1,sordnum);
+    end;
+  if  Acol = 4 then
+    begin
+    sordnum:=Trim(strngrd1.Cells[0,Arow]);
+    ProductsWrite(OrderHead,Arow,strngrd1,sordnum);
+    end;
+
+   if  Acol = 5 then
+    begin
+    sordnum:=Trim(strngrd1.Cells[0,Arow]);
+    makeNaklodnayaGreatAgain(OrderHead,Pricehead,Arow,strngrd1,sordnum);
+    end;
+
   end;
-if  Acol = 4 then
-  begin
-  sordnum:=Trim(strngrd1.Cells[0,Arow]);
-  ProductsWrite(invhead,Arow,strngrd1,sordnum);
-  end;
-  end;
+
 end;
 end;
 end.
-
-{
-  сделать две доп колонки для заказа - добавить и посмотреть товары
-  соответственно изменить процедуру отрисовки списка товаров
-
-
-
-}
-

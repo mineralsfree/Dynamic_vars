@@ -4,38 +4,45 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.Grids,
-  Vcl.StdCtrls,UOrdList;
+  Vcl.StdCtrls,UOrdList,UPriceList;
 
 
 
   procedure ProductsWrite(const OrdListHead:ordListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
- procedure ReadProductList(const OrdListHead:ordListADR;n:Integer; strngrd1:TStringGrid; ordnum:string);
+ procedure InsertProductList(const OrdListHead:ordListADR; const Pricehead:PriceListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
 implementation
 
 
-procedure ReadProductList(const OrdListHead:ordListADR;n:Integer; strngrd1:TStringGrid; ordnum:string);
+procedure InsertProductList(const OrdListHead:ordListADR; const Pricehead:PriceListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
 var
   OrdListTemp:ordListADR;    //    //  ordListCreate
   Ptemp:ProdListADR;         //
-
+  name:string;
   begin
 
-  OrdListTemp:=OrdListHead;
-    OrdListTemp:=OrdListTemp^.ADR;
+  OrdListTemp:=OrdListHead^.ADR;
     while (OrdListTemp^.INF.orderNum<>ordnum) do
       OrdListTemp:=OrdListTemp^.ADR;   // head of Order
     Ptemp:=OrdListTemp^.HADR;
     while PTemp^.ADR<>nil do
       PTemp:=PTemp^.ADR;
-
-
     New(Ptemp^.ADR);
     Ptemp:=Ptemp^.ADR;
     Ptemp^.ADR:=nil;
     Ptemp^.INF.orderNum:= ordnum;
-    Ptemp^.INF.productName:=InputBox
-    ('InsertName','Insert Name','blinchik s vetchinoi i syrom');
-    Ptemp^.INF.productQuantity:=StrToInt(InputBox('InsertQuantity','Insert Quantity','2'));
+   name:=InputBox('InsertName','Insert Name','Blin');
+    if ObjAdrOfname(PriceHead, name)<>nil then
+     Ptemp^.INF.productName:=name
+     else
+     begin
+     ShowMessage('Add such a product into PriceList');
+     Exit
+     end;
+    Ptemp^.INF.productQuantity:=StrToInt(InputBox
+    ('InsertQuantity','Insert Quantity',IntToStr(Random(10)+1)));
+
+
+
 
     //orderwrite(n,strngrd1,ordnum);
    // OrderWrite(strngrd1);
@@ -43,7 +50,6 @@ var
   procedure ProductsWrite(const OrdListHead:ordListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
   var i:Integer;
   OrdListTemp:ordListADR;
-
   Ptemp:prodlistadr;
   begin
   strngrd1.RowCount:=2;
