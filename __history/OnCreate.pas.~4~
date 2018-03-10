@@ -18,12 +18,12 @@ type
     productName: string[30];
     productQuantity: integer;
     end;
-   ORDERLISTADR=^TSP2;                    //         РјР°РіРёС‡РµСЃРєРѕРµ РјС‹С€Р»РµРЅРёРµ
-   INVOICEADR=^TSP1;                           //   РјР°РіРёС‡РµСЃРєРѕРµ РјС‹С€Р»РµРЅРёРµ
-   TSP1 = record                           //  Р·Р°РїРёСЃСЊ СЃ РёРЅС„РѕР№ Рё Р°РґСЂРµСЃРѕРј
+   ORDERLISTADR=^TSP2;                    //         магическое мышление
+   INVOICEADR=^TSP1;                           //   магическое мышление
+   TSP1 = record                           //  запись с инфой и адресом
     INF: TINVOICESINF;                     //
     ADR:INVOICEADR;                        //
-    HADR:ORDERLISTADR;     //  С…СЂР°РЅРёРј СЃСЃС‹Р»РєСѓ РЅР° РіРѕР»РѕРІСѓ СЃРїРёСЃРєР° С‚РѕРІР°СЂРѕРІ
+    HADR:ORDERLISTADR;     //  храним ссылку на голову списка товаров
     end;
     TSP2 = record
       INF:TORDERLIST;
@@ -46,7 +46,6 @@ type
     OrdList1: TMenuItem;
     Invoice1: TMenuItem;
     Naklodnaya1: TMenuItem;
-    btn1: TButton;
     procedure FormCreate(Sender: TObject);
 
     procedure strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
@@ -57,7 +56,6 @@ type
     procedure Invoice1Click(Sender: TObject);
     procedure save1Click(Sender: TObject);
     procedure OrdList1Click(Sender: TObject);
-    procedure btn1Click(Sender: TObject);
 
 
 //    procedure ordListCreate(I:Integer; strngrd1:TStringGrid);
@@ -163,15 +161,6 @@ strngrd1.RowCount:= strngrd1.RowCount-1;
 end;
 
 
-procedure TForm1.btn1Click(Sender: TObject);
-var num:Integer;
-begin
-  num:=strtoint(inputbox('','','21'));
-  deletePriceList(Pricehead,num);
-  writePriceList(Pricehead,strngrd1);
-
-end;
-
 procedure TForm1.btnAddClick(Sender: TObject);
 
 begin
@@ -251,7 +240,7 @@ begin
  mode:=priceList;
  btnAdd.Visible:=True;
  new(Pricehead);
- Pricehead^.ADR:=nil;
+ Pricehead.ADR:=nil;
  readPriceList(Pricehead,'priceList.brakhmen');
  writePriceList(Pricehead,strngrd1);
 
@@ -267,19 +256,19 @@ end;
 procedure TForm1.strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
   var i,Acol,Arow:Integer;
-  var ordnum:integer;
+  var ordnum:string[10];
 begin
 strngrd1.MouseToCell(X,Y,Acol,Arow);
 case mode of
   priceList:
   begin
    if Acol = 3 then
-   ordnum:=strtoint(strngrd1.Cells[0,Arow]);
-   deletePriceList(Pricehead,ordnum);
-   writePriceList(Pricehead,strngrd1);
+   ordnum:=strngrd1.Cells[0,Arow];
+   deletePriceList(Pricehead,StrToInt(ordnum),strngrd1,arow);
+   //writePriceList(Pricehead,strngrd1);
   end;
 
- { ordList:
+  ordList:
   begin
 if Acol = 3 then
   begin
@@ -291,14 +280,14 @@ if  Acol = 4 then
   ordnum:=Trim(strngrd1.Cells[0,Arow]);
   orderwrite(Arow,strngrd1,ordnum);
   end;
-  end;  }
+  end;
 end;
 end;
 end.
 
 {
-  СЃРґРµР»Р°С‚СЊ РґРІРµ РґРѕРї РєРѕР»РѕРЅРєРё РґР»СЏ Р·Р°РєР°Р·Р° - РґРѕР±Р°РІРёС‚СЊ Рё РїРѕСЃРјРѕС‚СЂРµС‚СЊ С‚РѕРІР°СЂС‹
-  СЃРѕРѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕ РёР·РјРµРЅРёС‚СЊ РїСЂРѕС†РµРґСѓСЂСѓ РѕС‚СЂРёСЃРѕРІРєРё СЃРїРёСЃРєР° С‚РѕРІР°СЂРѕРІ
+  сделать две доп колонки для заказа - добавить и посмотреть товары
+  соответственно изменить процедуру отрисовки списка товаров
 
 
 

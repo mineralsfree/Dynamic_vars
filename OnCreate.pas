@@ -46,6 +46,7 @@ type
     OrdList1: TMenuItem;
     Invoice1: TMenuItem;
     Naklodnaya1: TMenuItem;
+    btn1: TButton;
     procedure FormCreate(Sender: TObject);
 
     procedure strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
@@ -56,6 +57,7 @@ type
     procedure Invoice1Click(Sender: TObject);
     procedure save1Click(Sender: TObject);
     procedure OrdList1Click(Sender: TObject);
+    procedure btn1Click(Sender: TObject);
 
 
 //    procedure ordListCreate(I:Integer; strngrd1:TStringGrid);
@@ -161,6 +163,15 @@ strngrd1.RowCount:= strngrd1.RowCount-1;
 end;
 
 
+procedure TForm1.btn1Click(Sender: TObject);
+var num:Integer;
+begin
+  num:=strtoint(inputbox('','','21'));
+  deletePriceList(Pricehead,num);
+  writePriceList(Pricehead,strngrd1);
+
+end;
+
 procedure TForm1.btnAddClick(Sender: TObject);
 
 begin
@@ -240,7 +251,7 @@ begin
  mode:=priceList;
  btnAdd.Visible:=True;
  new(Pricehead);
- Pricehead.ADR:=nil;
+ Pricehead^.ADR:=nil;
  readPriceList(Pricehead,'priceList.brakhmen');
  writePriceList(Pricehead,strngrd1);
 
@@ -256,19 +267,19 @@ end;
 procedure TForm1.strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
   var i,Acol,Arow:Integer;
-  var ordnum:string[10];
+  var ordnum:integer;
 begin
 strngrd1.MouseToCell(X,Y,Acol,Arow);
 case mode of
   priceList:
   begin
    if Acol = 3 then
-   ordnum:=strngrd1.Cells[0,Arow];
-   deletePriceList(Pricehead,StrToInt(ordnum),strngrd1,arow);
-   //writePriceList(Pricehead,strngrd1);
+   ordnum:=strtoint(strngrd1.Cells[0,Arow]);
+   deletePriceList(Pricehead,ordnum);
+   writePriceList(Pricehead,strngrd1);
   end;
 
-  ordList:
+ { ordList:
   begin
 if Acol = 3 then
   begin
@@ -280,7 +291,7 @@ if  Acol = 4 then
   ordnum:=Trim(strngrd1.Cells[0,Arow]);
   orderwrite(Arow,strngrd1,ordnum);
   end;
-  end;
+  end;  }
 end;
 end;
 end.

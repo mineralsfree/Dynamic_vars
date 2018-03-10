@@ -31,8 +31,17 @@ object Form1: TForm1
     Width = 129
     Height = 50
     Caption = 'Add_new_list'
-    TabOrder = 1
+    TabOrder = 2
     OnClick = btnAddClick
+  end
+  object btn1: TButton
+    Left = 224
+    Top = 256
+    Width = 75
+    Height = 25
+    Caption = 'delete'
+    TabOrder = 1
+    OnClick = btn1Click
   end
   object mm1: TMainMenu
     Top = 8
