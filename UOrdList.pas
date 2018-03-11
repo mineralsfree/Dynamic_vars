@@ -9,7 +9,7 @@ uses
    Vcl.Menus, Vcl.Grids, Vcl.StdCtrls;
   type
    ProductlistINF = record
-   orderNum: string[10];
+   orderNum: Integer;
    productName:string[30];
    productQuantity:Integer;
    end;
@@ -19,7 +19,7 @@ uses
       ADR:ProdListADR;
     end;
    TOrdINF = record                   //
-   orderNum: string[10];
+   orderNum: Integer;
    orderDate:TDateTime;
    cutomerReq:string[20];
    end;
@@ -29,6 +29,7 @@ uses
     ADR:OrdListADR;                        //
     HADR:ProdListADR;     //  храним ссылку на голову списка товаров
     end;
+    procedure editordlist(const head:OrdListADR; Ordcode:string;fieldnum:Integer);
      procedure DeleteOrdList(const head:OrdListADR; Ordcode:string);
     function ObjAdrOfcode(const head: OrdListADR; name: string):OrdListADR;
     procedure readOrdlist(const Head:OrdListADR; Filename:string);
@@ -53,7 +54,7 @@ strngrd1.Cells[5,0]:='make naklodnaya';
 strngrd1.Cells[6,0]:='Delete';
  while temp<>nil do
  begin
-  strngrd1.Cells[0,strngrd1.RowCount-1]:=temp^.INF.orderNum;
+  strngrd1.Cells[0,strngrd1.RowCount-1]:=IntToStr(temp^.INF.orderNum);
   strngrd1.Cells[1,strngrd1.RowCount-1]:=DateToStr(temp^.INF.orderDate);
   strngrd1.Cells[2,strngrd1.RowCount-1]:=temp^.INF.cutomerReq;
   strngrd1.Cells[3,strngrd1.RowCount-1]:='+';
@@ -90,7 +91,7 @@ var
     New(temp^.HADR);
     temp^.HADR.ADR:=nil;
     temp^.ADR:=nil;
-    temp^.INF.orderNum:=OrderNum;
+    temp^.INF.orderNum:=StrToInt(OrderNum);
     temp^.INF.orderDate:=VarToDateTime(InputBox
     ('InsertDate','Insert Date','03.03.'+IntToStr(2000+Random(18))));
     temp^.INF.cutomerReq:=InputBox('InsertReq','Insert Customer requisites','+375296836944');
@@ -163,7 +164,7 @@ var
     while (temp^.ADR<>nil) do
     begin
        temp2:=temp^.ADR;
-    if (temp2^.INF.orderNum = Ordcode) then
+    if (temp2^.INF.orderNum = StrToInt(Ordcode)) then
     begin
       temp^.ADR:=temp2^.adr;
       Dispose(temp2);
@@ -180,10 +181,27 @@ function ObjAdrOfcode(const head: OrdListADR; name: string):OrdListADR;
     Result := nil;
     while(temp <> nil) do
     begin
-      if temp^.INF.orderNum = name then
+      if temp^.INF.orderNum = StrToInt(name) then
         Result:=temp;
       temp := temp^.Adr;
     end;
   end;
+procedure editordlist(const head:OrdListADR; Ordcode:string;fieldnum:Integer);
+ var temp:OrdListADR;
+ begin
+  temp:=head^.ADR;
+  while (temp<>nil) do
+  begin
+    if temp^.INF.orderNum = StrToInt(Ordcode) then
+    begin
+      case Fieldnum of
+        0:temp.INF.orderNum:=StrToInt(InputBox('Input changes','Input changes',IntToStr(temp.INF.orderNum)));
+        1:temp.INF.orderDate:=VarToDateTime(InputBox('Input changes','Input changes',DateToStr(temp.INF.orderDate)));
+        2:temp.INF.cutomerReq:=InputBox('','',temp.INF.cutomerReq);
+      end;
+    end;
+    temp:=temp^.ADR
+  end;
+ end;
 
 end.

@@ -63,6 +63,7 @@ var
   I: Integer;
 begin
 btn1.Visible:=False;
+
 new(OrderHead);
 OrderHead^.ADR:=nil;
 OrderHead^.HADR:=nil;
@@ -96,13 +97,13 @@ case mode of
   priceList:
   begin
   savePricelist(Pricehead,'priceList.brakhmen');
-  ShowMessage('Saved');
+  ShowMessage('PriceList Saved');
   end;
   ordList:
   begin
     saveOrdList(OrderHead);
     saveProductList(OrderHead,'kek.brakhmen');
-    ShowMessage('OrdList and prodlist saved');
+    ShowMessage('OrdList and ProdList saved');
   end;
 end;
 end;
@@ -125,10 +126,22 @@ case mode of
    deletePriceList(Pricehead,ordnum);
    writePriceList(Pricehead,strngrd1);
    end;
+   if (Acol =2) or (Acol = 1) or  (Acol = 0) then
+   begin
+   ordnum:=strtoint(strngrd1.Cells[0,Arow]);
+   editpricelist(Pricehead,ordnum,Acol);
+   writePriceList(Pricehead,strngrd1);
+   end;
   end;
 
   ordList:
   begin
+  if (Acol =2) or (Acol = 1) or  (Acol = 0) then
+   begin
+   ordnum:=strtoint(strngrd1.Cells[0,Arow]);
+   editordlist(OrderHead,IntToStr(ordnum),Acol);
+   OrdWrite(orderhead,strngrd1);              // zagatovka
+   end;
   if Acol = 3 then
     begin
     sordnum:=strngrd1.Cells[0,Arow];

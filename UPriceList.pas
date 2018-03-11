@@ -6,7 +6,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.Grids, Vcl.StdCtrls;
  type
   PricelistINF = record
-   productCode: string[10];
+   productCode: Integer;
    productName:string[30];
    productPrice:Integer;
    end;
@@ -15,7 +15,8 @@ uses
     INF: PricelistINF;
     ADR: PriceListADR;
     end;
-     function getPrice(const head:PriceListADR; name:string):Integer;
+    procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:Integer);
+    function getPrice(const head:PriceListADR; name:string):Integer;
     function ObjAdrOfcode(const head: PriceListADR; name: string):PriceListADR;
     procedure deletePriceList(const head:PriceListADR; productcode:Integer);
     function ObjAdrOfname(const head: PriceListADR; name: string):PriceListADR;
@@ -107,7 +108,7 @@ uses
       temp:=temp^.ADR;
       temp^.ADR:=nil;
       temp.INF.productName:=name;
-      temp.INF.productCode:=code;
+      temp.INF.productCode:=StrToInt(code);
      end
      else
      begin
@@ -132,7 +133,7 @@ uses
     temp:=head^.ADR;
     while temp<>nil do
     begin
-    Grid.Cells[0,Grid.RowCount-1]:=Temp.INF.productCode;
+    Grid.Cells[0,Grid.RowCount-1]:=IntToStr(Temp.INF.productCode);
     Grid.Cells[1,Grid.RowCount-1]:=Temp.INF.productName;
     Grid.Cells[2,Grid.RowCount-1]:=IntToStr(Temp.INF.productPrice);
     Grid.Cells[3,Grid.RowCount-1]:='-';
@@ -164,7 +165,7 @@ uses
     Result := nil;
     while(temp <> nil) do
     begin
-      if temp^.INF.productCode = name then
+      if temp^.INF.productCode = StrToInt(name) then
         Result:=temp;
       temp := temp^.Adr;
     end;
@@ -179,7 +180,7 @@ uses
     while (temp^.ADR<>nil) do
     begin
        temp2:=temp^.ADR;
-    if (temp2^.INF.productCode = IntToStr(productcode)) then
+    if (temp2^.INF.productCode = productcode) then
     begin
       temp^.ADR:=temp2^.adr;
       Dispose(temp2);
@@ -195,4 +196,21 @@ uses
       result:=temp^.INF.productPrice;
     end;
 
+procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:Integer);
+    var temp:PriceListADR;
+  begin
+  temp:=head^.ADR;
+  while (temp<>nil) do
+  begin
+    if temp^.INF.productCode =productcode then
+    begin
+      case Fieldnum of
+        0:temp.INF.productCode:=StrToInt(InputBox('Input changes','Input changes',IntToStr(temp.INF.productCode)));
+        1:temp.INF.productName:=InputBox('Input changes','Input changes',temp.INF.productName);
+        2:temp.INF.productPrice:=StrToInt(InputBox('','',IntToStr(temp.INF.productPrice)));
+      end;
+    end;
+    temp:=temp^.ADR
+  end;
+  end;
 end.

@@ -21,7 +21,7 @@ var
   begin
 
    OrdListTemp:=OrdListHead^.ADR;
-    while (OrdListTemp^.INF.orderNum<>ordnum) do
+    while (OrdListTemp^.INF.orderNum<>StrToInt(ordnum)) do
       OrdListTemp:=OrdListTemp^.ADR;   // head of Order
     Ptemp:=OrdListTemp^.HADR;
     while PTemp^.ADR<>nil do
@@ -32,7 +32,7 @@ var
       New(Ptemp^.ADR);
       Ptemp:=Ptemp^.ADR;
       Ptemp^.ADR:=nil;
-      Ptemp^.INF.orderNum:= ordnum;
+      Ptemp^.INF.orderNum:= StrToInt(ordnum);
       Ptemp^.INF.productName:=name;
       Ptemp^.INF.productQuantity:=StrToInt(InputBox
        ('InsertQuantity','Insert Quantity',IntToStr(Random(10)+1)));

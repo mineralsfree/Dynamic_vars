@@ -80,30 +80,6 @@ implementation
       end;
       strngrd1.RowCount:= strngrd1.RowCount-1;
       strngrd1.Cells[2,0]:='price: '+IntToStr(fullprice);
-
-
-
-
     end;
 
- {procedure insertPriceList(const head:InvoiceADR; productCode:Integer);
-   var
-   temp:InvoiceADR;
-   temp2:InvoiceADR;
-   begin
-     temp:=head;
-     while temp^.ADR<>nil do
-      temp:=temp^.ADR;
-
-      New(temp^.ADR);
-      temp:=temp^.ADR;
-      temp^.ADR:=nil;
-     temp.INF.productCode:=
-     InputBox('Enter product code','product code:',IntToStr(random(20000)+2));
-     temp.INF.productName:=InputBox
-     ('Enter product name' ,'Product name:', 'Shit from ass');
-     temp.INF.productPrice:=StrToInt
-     (InputBox('Enter price for 1 unit','Price: ',inttostr(Random(354)+1)));
-
-   end;        }
 end.
