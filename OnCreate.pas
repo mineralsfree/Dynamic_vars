@@ -101,7 +101,7 @@ case mode of
   end;
   ordList:
   begin
-    saveOrdList(OrderHead);
+    saveOrdList(OrderHead,'OrdList.brakhmen');
     saveProductList(OrderHead,'kek.brakhmen');
     ShowMessage('OrdList and ProdList saved');
   end;
@@ -117,6 +117,8 @@ procedure TForm1.strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
 
 begin
 strngrd1.MouseToCell(X,Y,Acol,Arow);
+ if Arow<>0 then
+ begin
 case mode of
   priceList:
   begin
@@ -162,9 +164,12 @@ case mode of
     end;
     if  Acol = 6 then
     begin
-    sordnum:=Trim(strngrd1.Cells[0,Arow]);
-    DeleteOrdList(OrderHead,sordnum);
-    OrdWrite(OrderHead,strngrd1);
+    if MessageDlg('Точно?',mtCustom, mbYesNo, 0) = mrYes then
+    begin
+      sordnum:=Trim(strngrd1.Cells[0,Arow]);
+      DeleteOrdList(OrderHead,sordnum);
+      OrdWrite(OrderHead,strngrd1);
+    end;
     end
   end;
   prodlist:
@@ -182,5 +187,6 @@ case mode of
     end;
 
 end;
+ end;
 end;
 end.
