@@ -30,12 +30,12 @@ uses
     HADR:ProdListADR;     //  храним ссылку на голову списка товаров
     end;
     procedure editordlist(const head:OrdListADR; Ordcode:string;fieldnum:Integer);
-     procedure DeleteOrdList(const head:OrdListADR; Ordcode:string);
+    procedure DeleteOrdList(const head:OrdListADR; Ordcode:string);
     function ObjAdrOfcode(const head: OrdListADR; name: string):OrdListADR;
     procedure readOrdlist(const Head:OrdListADR; Filename:string);
     procedure OrdInsert(const head:OrdListADR);
     procedure OrdWrite(head:OrdListADR; strngrd1:TStringGrid);
-    procedure saveOrdList(const Head:OrdListADR);
+    procedure saveOrdList(const Head:OrdListADR; Filename:string);
 implementation
 procedure OrdWrite(head:OrdListADR; strngrd1:TStringGrid);
 
@@ -136,7 +136,7 @@ var
      close(f)
    end;
 
-   procedure saveOrdList(const Head:OrdListADR);
+   procedure saveOrdList(const Head:OrdListADR; Filename:string);
    var
    Temp:OrdlistADR;
    f: file of TOrdINF;

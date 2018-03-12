@@ -79,8 +79,8 @@ var
    TInfo:ProductlistINF;
    f: file of ProductlistINF;
    begin
-    assignFile(f,'ProductList.brakhmen');
-   if fileExists('ProductList.brakhmen') then
+    assignFile(f,Filename);
+   if fileExists(Filename) then
      begin
      Reset(f);
      //mainHead^.ADR:=nil;
@@ -123,7 +123,7 @@ var
    Temp:ProdlistADR;
    f: file of ProductlistINF;
    begin
-   AssignFile(f,'ProductList.brakhmen');
+   AssignFile(f,Filename);
    Rewrite(f);
    Seek(f,Filesize(f));
      if mainHead.ADR<>nil then

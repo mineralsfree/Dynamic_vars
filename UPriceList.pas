@@ -35,9 +35,9 @@ uses
    f: file of PriceListINF;
    begin
 
-   if fileExists('priceList.brakhmen') then
+   if fileExists(Filename) then
      begin
-       AssignFile(f,'priceList.brakhmen');
+       AssignFile(f,Filename);
      Reset(f);
      Head^.ADR:=nil;
      temp:=Head;
@@ -64,7 +64,7 @@ uses
    Temp:PricelistADR;
    f: file of PriceListINF;
    begin
-   AssignFile(f,'priceList.brakhmen');
+   AssignFile(f,Filename);
    Rewrite(f);
    Seek(f,Filesize(f));
    if Head.ADR<>nil then
