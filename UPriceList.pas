@@ -8,7 +8,7 @@ uses
   PricelistINF = record
    productCode: Integer;
    productName:string[30];
-   productPrice:Integer;
+   productPrice:Currency;
    end;
    PriceListADR=^TSP3;
     TSP3= record
@@ -16,7 +16,7 @@ uses
     ADR: PriceListADR;
     end;
     procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:Integer);
-    function getPrice(const head:PriceListADR; name:string):Integer;
+    function getPrice(const head:PriceListADR; name:string):Currency;
     function ObjAdrOfcode(const head: PriceListADR; name: string):PriceListADR;
     procedure deletePriceList(const head:PriceListADR; productcode:Integer);
     function ObjAdrOfname(const head: PriceListADR; name: string):PriceListADR;
@@ -113,9 +113,8 @@ uses
      else
      begin
       ShowMessage('Error!' +#10#13+ 'Redeclaration of product or same productCode');
-      Exit;
      end;
-     temp.INF.productPrice:=StrToInt(InputBox('Enter price for 1 unit','Price: ',inttostr(1000)));
+     temp.INF.productPrice:=StrToCurr(InputBox('Enter price for 1 unit','Price: ',CurrToStr(1000)));
 
    end;
 
@@ -135,7 +134,7 @@ uses
     begin
     Grid.Cells[0,Grid.RowCount-1]:=IntToStr(Temp.INF.productCode);
     Grid.Cells[1,Grid.RowCount-1]:=Temp.INF.productName;
-    Grid.Cells[2,Grid.RowCount-1]:=IntToStr(Temp.INF.productPrice);
+    Grid.Cells[2,Grid.RowCount-1]:=CurrToStr(Temp.INF.productPrice);
     Grid.Cells[3,Grid.RowCount-1]:='-';
     Grid.RowCount:= Grid.RowCount+1;
     temp:=temp^.ADR;
@@ -157,7 +156,7 @@ uses
     end;
   end;
 
-    function ObjAdrOfcode(const head: PriceListADR; name: string):PriceListADR;
+  function ObjAdrOfcode(const head: PriceListADR; name: string):PriceListADR;
   var
   temp: PricelistADR;
   begin
@@ -189,7 +188,7 @@ uses
     temp:=temp^.ADR;
     end;
     end;
-    function getPrice(const head:PriceListADR; name:string):Integer;
+    function getPrice(const head:PriceListADR; name:string):Currency;
     var temp:PriceListADR;
     begin
       temp:=ObjAdrOfname(head,name);
@@ -198,6 +197,7 @@ uses
 
 procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:Integer);
     var temp:PriceListADR;
+    var newcode:string;
   begin
   temp:=head^.ADR;
   while (temp<>nil) do
@@ -205,9 +205,14 @@ procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:I
     if temp^.INF.productCode =productcode then
     begin
       case Fieldnum of
-        0:temp.INF.productCode:=StrToInt(InputBox('Input changes','Input changes',IntToStr(temp.INF.productCode)));
+        0:
+        begin
+        newcode:=(InputBox('Input changes','Input changes',IntToStr(temp.INF.productCode)));
+        if (ObjAdrOfcode(head,IntToStr(productcode))=nil)
+        then temp.INF.productCode:=StrToInt(newcode);
+        end;
         1:temp.INF.productName:=InputBox('Input changes','Input changes',temp.INF.productName);
-        2:temp.INF.productPrice:=StrToInt(InputBox('','',IntToStr(temp.INF.productPrice)));
+        2:temp.INF.productPrice:=StrToCurr(InputBox('Input changes','Input changes',CurrToStr(temp.INF.productPrice)));
       end;
     end;
     temp:=temp^.ADR

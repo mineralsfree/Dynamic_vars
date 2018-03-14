@@ -46,6 +46,7 @@ type
     OrdList1: TMenuItem;
     Invoice1: TMenuItem;
     Naklodnaya1: TMenuItem;
+    btn1: TButton;
     procedure FormCreate(Sender: TObject);
 
     procedure strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
@@ -55,6 +56,9 @@ type
     procedure priceList1Click(Sender: TObject);
     procedure Invoice1Click(Sender: TObject);
     procedure save1Click(Sender: TObject);
+    procedure OrdList1Click(Sender: TObject);
+    procedure btn1Click(Sender: TObject);
+
 
 //    procedure ordListCreate(I:Integer; strngrd1:TStringGrid);
  //   procedure InvoicesWrite(strngrd1:TStringGrid);
@@ -159,13 +163,24 @@ strngrd1.RowCount:= strngrd1.RowCount-1;
 end;
 
 
+procedure TForm1.btn1Click(Sender: TObject);
+var num:Integer;
+begin
+  num:=strtoint(inputbox('','','21'));
+  deletePriceList(Pricehead,num);
+  writePriceList(Pricehead,strngrd1);
+
+end;
+
 procedure TForm1.btnAddClick(Sender: TObject);
 
 begin
+
 if mode = priceList then
   begin
-  new(Pricehead);
-  readPriceList(Pricehead.ADR, GetCurrentDir + 'priceList.brakhmen');
+
+  insertPriceList(Pricehead,Random(200));
+  writePriceList(Pricehead,strngrd1);
 
   end
 else
@@ -185,7 +200,6 @@ else
   invtemp^.INF.orderDate:=VarToDateTime(InputBox
   ('InsertDate','Insert Date','03.03.'+IntToStr(Random(2018)+1)));
   invtemp^.INF.cutomerReq:=InputBox('InsertReq','Insert Customer requisites','2281488');
-
   InvoiceWrite(strngrd1);
   end;
 end;
@@ -225,25 +239,48 @@ btnAdd.Visible:=True;
 InvoiceWrite(strngrd1);
 end;
 
+procedure TForm1.OrdList1Click(Sender: TObject);
+begin
+mode:=ordList;
+InvoiceWrite(strngrd1);
+
+end;
+
 procedure TForm1.priceList1Click(Sender: TObject);
 begin
  mode:=priceList;
  btnAdd.Visible:=True;
+ new(Pricehead);
+ Pricehead^.ADR:=nil;
+ readPriceList(Pricehead,'priceList.brakhmen');
+ writePriceList(Pricehead,strngrd1);
 
  //OrderWrite(strngrd1);
 end;
 
 procedure TForm1.save1Click(Sender: TObject);
 begin
-savePricelist(Pricehead, GetCurrentDir+ 'pricelist.brakhmen');
+savePricelist(Pricehead,'priceList.brakhmen');
+ShowMessage('Saved');
 end;
 
 procedure TForm1.strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
   var i,Acol,Arow:Integer;
-  var ordnum:string[10];
+  var ordnum:integer;
 begin
 strngrd1.MouseToCell(X,Y,Acol,Arow);
+case mode of
+  priceList:
+  begin
+   if Acol = 3 then
+   ordnum:=strtoint(strngrd1.Cells[0,Arow]);
+   deletePriceList(Pricehead,ordnum);
+   writePriceList(Pricehead,strngrd1);
+  end;
+
+ { ordList:
+  begin
 if Acol = 3 then
   begin
   ordnum:=strngrd1.Cells[0,Arow];
@@ -254,6 +291,8 @@ if  Acol = 4 then
   ordnum:=Trim(strngrd1.Cells[0,Arow]);
   orderwrite(Arow,strngrd1,ordnum);
   end;
+  end;  }
+end;
 end;
 end.
 

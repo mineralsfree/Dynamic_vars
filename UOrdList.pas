@@ -29,6 +29,8 @@ uses
     ADR:OrdListADR;                        //
     HADR:ProdListADR;     //  храним ссылку на голову списка товаров
     end;
+//    procedure writeSearchOrd(const head:OrdListADR; Input:string);
+//    procedure SortListOrd(const head:OrdListADR);
     procedure editordlist(const head:OrdListADR; Ordcode:string;fieldnum:Integer);
     procedure DeleteOrdList(const head:OrdListADR; Ordcode:string);
     function ObjAdrOfcode(const head: OrdListADR; name: string):OrdListADR;
@@ -186,7 +188,7 @@ function ObjAdrOfcode(const head: OrdListADR; name: string):OrdListADR;
       temp := temp^.Adr;
     end;
   end;
-procedure editordlist(const head:OrdListADR; Ordcode:string;fieldnum:Integer);
+procedure editordlist(const head:OrdListADR; Ordcode:string; fieldnum:Integer);
  var temp:OrdListADR;
  begin
   temp:=head^.ADR;
@@ -197,11 +199,12 @@ procedure editordlist(const head:OrdListADR; Ordcode:string;fieldnum:Integer);
       case Fieldnum of
         0:temp.INF.orderNum:=StrToInt(InputBox('Input changes','Input changes',IntToStr(temp.INF.orderNum)));
         1:temp.INF.orderDate:=VarToDateTime(InputBox('Input changes','Input changes',DateToStr(temp.INF.orderDate)));
-        2:temp.INF.cutomerReq:=InputBox('','',temp.INF.cutomerReq);
+        2:temp.INF.cutomerReq:=InputBox('Input changes','Input changes',temp.INF.cutomerReq);
       end;
     end;
     temp:=temp^.ADR
   end;
  end;
+
 
 end.

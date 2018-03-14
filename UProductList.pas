@@ -5,11 +5,13 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.Grids,
   Vcl.StdCtrls,UOrdList,UPriceList;
-       procedure Deleteproduct(const mainhead:OrdListADR;orderq:Integer; productname:string;n:Integer);
+
+  function ProdlistObjAdrOfcode(const mainhead: OrdListADR; prodname: string):ProdListADR;
+  procedure Deleteproduct(const mainhead:OrdListADR;orderq:Integer; productname:string;n:Integer);
   procedure saveProductList(const mainHead:OrdListADR;Filename:string);
- procedure readproductlist(const mainHead:OrdListADR;Filename:string);
+  procedure readproductlist(const mainHead:OrdListADR;Filename:string);
   procedure ProductsWrite(const OrdListHead:ordListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
- procedure InsertProductList(const OrdListHead:ordListADR; const Pricehead:PriceListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
+  procedure InsertProductList(const OrdListHead:ordListADR; const Pricehead:PriceListADR; n:Integer; strngrd1:TStringGrid; ordnum:string);
 implementation
 
 
@@ -18,6 +20,7 @@ var
   OrdListTemp:ordListADR;    //    //  ordListCreate
   Ptemp:ProdListADR;         //
   name:string;
+  money:Currency;
   begin
 
    OrdListTemp:=OrdListHead^.ADR;
@@ -79,15 +82,12 @@ var
    TInfo:ProductlistINF;
    f: file of ProductlistINF;
    begin
+   ShowMessage('Reading prodList');
     assignFile(f,Filename);
    if fileExists(Filename) then
      begin
      Reset(f);
-     //mainHead^.ADR:=nil;
      maintemp:=mainHead^.ADR;
-     {temp:=maintemp^.HADR;
-          temp^.ADR:=nil;
-               temp:=temp^.ADR;}
       if not(Eof(f)) then read(f,TInfo)
       else exit;
      while not(Eof(f)) do
@@ -136,6 +136,7 @@ var
            temp:=maintemp^.HADR.ADR;
            while Temp<> nil do
              begin
+                ShowMessage('kek');
                write(f,Temp.INF);
                Temp:=Temp^.ADR;
              end;
@@ -173,12 +174,31 @@ var
     temp:=temp^.ADR;
     end;
     end;
-    function getPrice(const head:PriceListADR; name:string):Integer;
+    function getPrice(const head:PriceListADR; name:string):Currency;
     var temp:PriceListADR;
     begin
       temp:=ObjAdrOfname(head,name);
       result:=temp^.INF.productPrice;
     end;
+function ProdlistObjAdrOfcode(const mainhead: OrdListADR; prodname:string):ProdListADR;
+  var
+  ordtemp: OrdListADR;
+  temp:ProdListADR;
+  begin
+    ordtemp := mainhead;
+    Result := nil;
+    while(ordtemp <> nil) do
+    begin
+      temp:=ordtemp.HADR;
+       while temp<>nil do
+        begin
+        if temp^.INF.productName = prodname then    Result:=temp;
+        temp := temp^.Adr
+        end;
+      ordtemp := ordtemp^.Adr;
+    end;
+  end;
+
 end.
 
 

@@ -5,9 +5,11 @@ uses
   OnCreate in 'OnCreate.pas' {Form1},
   UOrdList in 'UOrdList.pas',
   UPriceList in 'UPriceList.pas',
-  UProductList in 'UProductList.pas';
+  UProductList in 'UProductList.pas',
+  Invoice in 'Invoice.pas';
 
 {$R *.res}
+
 
 begin
   Application.Initialize;

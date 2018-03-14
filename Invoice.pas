@@ -8,7 +8,7 @@ uses
 type InvoiceINF = record
    productCode: string[10];
    productQuantity:string[30];
-   productsumPrice:Integer;
+   productsumPrice:Currency;
    end;
    InvoiceADR=^TSP3;
     TSP3= record
@@ -36,7 +36,7 @@ implementation
     begin
     Grid.Cells[0,Grid.RowCount-1]:=Temp.INF.productCode;
     Grid.Cells[1,Grid.RowCount-1]:=Temp.INF.productQuantity;
-    Grid.Cells[2,Grid.RowCount-1]:=IntToStr(Temp.INF.productsumPrice);
+    Grid.Cells[2,Grid.RowCount-1]:=CurrToStr(Temp.INF.productsumPrice);
     Grid.Cells[3,Grid.RowCount-1]:='-';
     Grid.RowCount:= Grid.RowCount+1;
     temp:=temp^.ADR;
@@ -52,8 +52,8 @@ implementation
     OrdListtemp:OrdListADR;
     i:Integer;
     Ptemp:prodlistadr;
-    currprice:Integer;
-    fullprice:Integer;
+    currprice:Currency;
+    fullprice:Currency;
     begin
       fullprice:=0;
       strngrd1.RowCount:=2;
@@ -73,13 +73,13 @@ implementation
         Ptemp^.INF.productQuantity;
         strngrd1.Cells[0,strngrd1.RowCount-1]:=Ptemp^.INF.productName;
         strngrd1.Cells[1,strngrd1.RowCount-1]:=IntToStr(Ptemp^.INF.productQuantity);
-        strngrd1.Cells[2,strngrd1.RowCount-1]:=IntToStr(currprice);
+        strngrd1.Cells[2,strngrd1.RowCount-1]:=CurrToStr(currprice);
         strngrd1.RowCount:= strngrd1.RowCount+1;
       Ptemp:=Ptemp^.ADR;
       fullprice:=fullprice+currprice;
       end;
       strngrd1.RowCount:= strngrd1.RowCount-1;
-      strngrd1.Cells[2,0]:='price: '+IntToStr(fullprice);
+      strngrd1.Cells[2,0]:='price: '+CurrToStr(fullprice);
     end;
 
 end.

@@ -26,7 +26,7 @@ object Form1: TForm1
     OnMouseUp = strngrd1MouseUp
   end
   object btnAdd: TButton
-    Left = 752
+    Left = 763
     Top = 309
     Width = 129
     Height = 50
@@ -35,12 +35,22 @@ object Form1: TForm1
     OnClick = btnAddClick
   end
   object btn1: TButton
-    Left = 96
-    Top = 279
+    Left = 8
+    Top = 310
     Width = 121
     Height = 49
-    Caption = 'Create Invoice'
+    Caption = 'Date_sort'
     TabOrder = 2
+    OnClick = btn1Click
+  end
+  object btn2: TButton
+    Left = 520
+    Top = 320
+    Width = 75
+    Height = 25
+    Caption = 'btn2'
+    TabOrder = 3
+    OnClick = btn2Click
   end
   object mm1: TMainMenu
     Top = 8
