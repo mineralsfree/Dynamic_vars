@@ -197,7 +197,7 @@ uses
 
 procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:Integer);
     var temp:PriceListADR;
-    var newcode:string;
+    var newcode:Variant;
   begin
   temp:=head^.ADR;
   while (temp<>nil) do
@@ -211,7 +211,9 @@ procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:I
         if (ObjAdrOfcode(head,IntToStr(productcode))=nil)
         then temp.INF.productCode:=StrToInt(newcode);
         end;
-        1:temp.INF.productName:=InputBox('Input changes','Input changes',temp.INF.productName);
+        1:begin
+             temp.INF.productName:=InputBox('Input changes','Input changes',temp.INF.productName);
+          end;
         2:temp.INF.productPrice:=StrToCurr(InputBox('Input changes','Input changes',CurrToStr(temp.INF.productPrice)));
       end;
     end;

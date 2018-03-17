@@ -82,7 +82,7 @@ var
    TInfo:ProductlistINF;
    f: file of ProductlistINF;
    begin
-   //ShowMessage('Reading prodList');
+   ShowMessage('Reading prodList');
     assignFile(f,Filename);
    if fileExists(Filename) then
      begin
@@ -136,6 +136,7 @@ var
            temp:=maintemp^.HADR.ADR;
            while Temp<> nil do
              begin
+                ShowMessage('kek');
                write(f,Temp.INF);
                Temp:=Temp^.ADR;
              end;

@@ -29,8 +29,8 @@ uses
     ADR:OrdListADR;                        //
     HADR:ProdListADR;     //  храним ссылку на голову списка товаров
     end;
-//    procedure writeSearchOrd(const head:OrdListADR; Input:string);
-//    procedure SortListOrd(const head:OrdListADR);
+   procedure writeSearchOrd(const head:OrdListADR; Input:string);
+    procedure SortListOrd(const head:OrdListADR);
     procedure editordlist(const head:OrdListADR; Ordcode:string;fieldnum:Integer);
     procedure DeleteOrdList(const head:OrdListADR; Ordcode:string);
     function ObjAdrOfcode(const head: OrdListADR; name: string):OrdListADR;
@@ -206,5 +206,62 @@ procedure editordlist(const head:OrdListADR; Ordcode:string; fieldnum:Integer);
   end;
  end;
 
+ procedure SortListOrd(const head:OrdListADR);
+ var
+ temp:ordlistadr;
+ temp2:OrdListADR;
+ t1:OrdListADR;
+ begin
+   temp := head;
+  while temp.adr <> nil do
+  begin
+    temp2 := temp.adr;
+    while temp2.adr <> nil do
+    begin
+      if (temp^.ADR.INF.orderDate< temp2^.ADR.INF.orderDate) then
+      begin
 
+        t1 := temp2^.adr;
+        temp2^.adr := temp^.adr;
+        temp^.adr := t1;
+
+        t1 := temp^.adr^.adr;
+        temp^.adr^.adr := temp2^.adr.adr;
+        temp2^.adr^.adr := t1;
+
+        temp2 := temp;
+      end;
+      temp2 := temp2^.adr;
+    end;
+    temp := temp^.adr;
+  end;
+end;
+  function specialized(head:ProdListADR; prodname:string):Boolean;
+  var temp:ProdListADR;
+  begin
+    temp:=head;
+    result:=False;
+    while temp<>nil do
+    begin
+      if temp.ADR.INF.productName = prodname then
+      begin
+      result:=True;
+      ShowMessage('kek');
+      end;
+      temp:=temp^.ADR;
+      end;
+    end;
+  procedure writeSearchOrd(const head:OrdListADR; Input:string);
+  var temp: OrdListADR;
+  begin
+  temp:=head;
+  while temp<>nil do
+    begin
+      if specialized(temp.HADR,Input) then
+      begin
+      showmessage('kek');
+      end;
+    temp:=temp^.ADR;
+  end;
+  end;
 end.

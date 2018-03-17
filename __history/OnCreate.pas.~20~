@@ -47,14 +47,14 @@ implementation
 
   procedure TForm1.btn1Click(Sender: TObject);
   begin
-  SortListOrd(OrderHead);
+  //SortListOrd(OrderHead);
   OrdWrite(OrderHead,strngrd1);
 
   end;
 
 procedure TForm1.btn2Click(Sender: TObject);
 begin
-writesearchord(OrderHead,InputBox('','','Blin'));
+//writesearchord(OrderHead,InputBox('','','Blin'));
 
 end;
 
