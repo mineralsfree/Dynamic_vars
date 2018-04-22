@@ -15,6 +15,8 @@ uses
     INF: PricelistINF;
     ADR: PriceListADR;
     end;
+    function GetProductCode(const head:PriceListADR;  kek:Integer):Integer;
+    function GetProdsectID(const head:PriceListADR):Currency;
     procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:Integer);
     function getPrice(const head:PriceListADR; name:string):Currency;
     function ObjAdrOfcode(const head: PriceListADR; name: string):PriceListADR;
@@ -26,7 +28,40 @@ uses
     procedure readPriceList(const Head:PriceListADR; Filename:string);
   implementation
 
+  function GetProdsectID(const head:PriceListADR):Currency;
+  var flag:Boolean;
 
+  begin
+    repeat
+    flag:=True;
+
+          try
+          Result:=StrTocurr(InputBox('Enter product code','product code:',currToStr(1000)));
+          except
+             on E:Exception do
+             begin
+             ShowMessage('Wrong input');
+             flag:=false;
+             end;
+          end;
+    until (flag);
+  end;
+ function GetProductCode(const head:PriceListADR;kek:Integer):Integer;
+  var flag:Boolean;
+  begin
+    repeat
+    flag:=True;
+          try
+          Result:=StrToInt(InputBox('Enter price for 1 unit','Price: ',IntToStr(kek)));
+          except
+             on E:Exception do
+             begin
+             ShowMessage('Wrong input');
+             flag:=false;
+             end;
+          end;
+    until (flag);
+  end;
    procedure readPricelist(const Head:PriceListADR; Filename:string);
    var
    Temp:PricelistADR;
@@ -87,35 +122,33 @@ uses
    kek:Integer;
    code:string;
    begin
-      kek:=10000001;
-     temp:=head;
-     while temp^.ADR<>nil do
+   kek:=10000001;
+   temp:=head;
+   while temp^.ADR<>nil do
      begin
      temp:=temp^.ADR;
      Inc(kek);
      end;
-     code:=InputBox
-     ('Enter product code','product code:',IntToStr(kek));
-     name:=InputBox
-     ('Enter product name' ,'Product name:', 'Xiaomi redmi bomjbook '+IntToStr(kek-10000000)+' pro');
-     if ((objadrofname(head, name)=nil)
+   code:=IntToStr(GetProductCode(head,kek));
+   name:=InputBox
+     ('Enter product name' ,'Product name:', 'Xiaomi redmi '+IntToStr(kek-10000000)+' pro');
+   if ((objadrofname(head, name)=nil)
      and  (objadrofcode(head, code)=nil))
      and  (name<>'')
      and (code<>'')
-     then
+   then
      begin
       New(temp^.ADR);
       temp:=temp^.ADR;
       temp^.ADR:=nil;
       temp.INF.productName:=name;
       temp.INF.productCode:=StrToInt(code);
+      temp.INF.productPrice:=GetProdsectID(head);
      end
-     else
+   else
      begin
       ShowMessage('Error!' +#10#13+ 'Redeclaration of product or same productCode');
      end;
-     temp.INF.productPrice:=StrToCurr(InputBox('Enter price for 1 unit','Price: ',CurrToStr(1000)));
-
    end;
 
     procedure writePriceList (const head:PriceListADR; Grid:TStringGrid);
@@ -128,17 +161,16 @@ uses
     Grid.Cells[1,0]:='Product Name';
     Grid.Cells[2,0]:='Product Price';
     Grid.Cells[3,0]:='Delete';
-
     temp:=head^.ADR;
     while temp<>nil do
-    begin
-    Grid.Cells[0,Grid.RowCount-1]:=IntToStr(Temp.INF.productCode);
-    Grid.Cells[1,Grid.RowCount-1]:=Temp.INF.productName;
-    Grid.Cells[2,Grid.RowCount-1]:=CurrToStr(Temp.INF.productPrice);
-    Grid.Cells[3,Grid.RowCount-1]:='-';
-    Grid.RowCount:= Grid.RowCount+1;
-    temp:=temp^.ADR;
-    end;
+      begin
+      Grid.Cells[0,Grid.RowCount-1]:=IntToStr(Temp.INF.productCode);
+      Grid.Cells[1,Grid.RowCount-1]:=Temp.INF.productName;
+      Grid.Cells[2,Grid.RowCount-1]:=CurrToStr(Temp.INF.productPrice);
+      Grid.Cells[3,Grid.RowCount-1]:='-';
+      Grid.RowCount:= Grid.RowCount+1;
+      temp:=temp^.ADR;
+      end;
     Grid.RowCount:= Grid.RowCount-1;
     end;
 
@@ -177,16 +209,16 @@ uses
     begin
      temp:=head;
     while (temp^.ADR<>nil) do
-    begin
-       temp2:=temp^.ADR;
-    if (temp2^.INF.productCode = productcode) then
-    begin
-      temp^.ADR:=temp2^.adr;
-      Dispose(temp2);
-    end
-    else
-    temp:=temp^.ADR;
-    end;
+      begin
+         temp2:=temp^.ADR;
+      if (temp2^.INF.productCode = productcode) then
+      begin
+        temp^.ADR:=temp2^.adr;
+        Dispose(temp2);
+      end
+      else
+        temp:=temp^.ADR;
+      end;
     end;
     function getPrice(const head:PriceListADR; name:string):Currency;
     var temp:PriceListADR;
@@ -207,17 +239,16 @@ procedure editPricelist(const head:PriceListADR; productcode:Integer; Fieldnum:I
       case Fieldnum of
         0:
         begin
-        newcode:=(InputBox('Input changes','Input changes',IntToStr(temp.INF.productCode)));
+        newcode:=IntToStr(GetProductCode(head,temp.INF.productCode));
         if (ObjAdrOfcode(head,IntToStr(productcode))=nil)
         then temp.INF.productCode:=StrToInt(newcode);
         end;
-        1:begin
-             temp.INF.productName:=InputBox('Input changes','Input changes',temp.INF.productName);
-          end;
-        2:temp.INF.productPrice:=StrToCurr(InputBox('Input changes','Input changes',CurrToStr(temp.INF.productPrice)));
+        1:temp.INF.productName:=InputBox('Input changes','Input changes',temp.INF.productName);
+        2:temp.INF.productPrice:=GetProdsectID(head);
       end;
     end;
-    temp:=temp^.ADR
+  temp:=temp^.ADR
   end;
   end;
+
 end.

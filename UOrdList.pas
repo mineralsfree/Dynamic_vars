@@ -29,7 +29,7 @@ uses
     ADR:OrdListADR;                        //
     HADR:ProdListADR;     //  храним ссылку на голову списка товаров
     end;
-   procedure writeSearchOrd(const head:OrdListADR; Input:string);
+   procedure writeSearchOrd(const head:OrdListADR; Input:string; strngrd1:TStringGrid);
     procedure SortListOrd(const head:OrdListADR);
     procedure editordlist(const head:OrdListADR; Ordcode:string;fieldnum:Integer);
     procedure DeleteOrdList(const head:OrdListADR; Ordcode:string);
@@ -39,6 +39,22 @@ uses
     procedure OrdWrite(head:OrdListADR; strngrd1:TStringGrid);
     procedure saveOrdList(const Head:OrdListADR; Filename:string);
 implementation
+ function GetDatesectID(const head:OrdListADR):TDateTime;
+  var flag:Boolean;
+  begin
+    repeat
+    flag:=True;
+          try
+          Result:=StrToDateTime(InputBox('InsertDate','Insert Date','03.03.'+IntToStr(2000+Random(18))));
+          except
+             on E:Exception do
+             begin
+             ShowMessage('Wrong input');
+             flag:=false;
+             end;
+          end;
+    until (flag);
+  end;
 procedure OrdWrite(head:OrdListADR; strngrd1:TStringGrid);
 
 var i:Integer;
@@ -94,8 +110,7 @@ var
     temp^.HADR.ADR:=nil;
     temp^.ADR:=nil;
     temp^.INF.orderNum:=StrToInt(OrderNum);
-    temp^.INF.orderDate:=VarToDateTime(InputBox
-    ('InsertDate','Insert Date','03.03.'+IntToStr(2000+Random(18))));
+    temp^.INF.orderDate:=GetDatesectID(head);
     temp^.INF.cutomerReq:=InputBox('InsertReq','Insert Customer requisites','+375296836944');
     end
     else
@@ -218,7 +233,7 @@ procedure editordlist(const head:OrdListADR; Ordcode:string; fieldnum:Integer);
     temp2 := temp.adr;
     while temp2.adr <> nil do
     begin
-      if (temp^.ADR.INF.orderDate< temp2^.ADR.INF.orderDate) then
+      if (temp^.ADR.INF.orderDate < temp2^.ADR.INF.orderDate) then
       begin
 
         t1 := temp2^.adr;
@@ -236,32 +251,33 @@ procedure editordlist(const head:OrdListADR; Ordcode:string; fieldnum:Integer);
     temp := temp^.adr;
   end;
 end;
-  function specialized(head:ProdListADR; prodname:string):Boolean;
-  var temp:ProdListADR;
+  procedure writeSearchOrd(const head:OrdListADR; Input:string; strngrd1:TStringGrid);
+  var temp: OrdListADR;
+  var temp2:ProdListADR;
   begin
-    temp:=head;
-    result:=False;
+  strngrd1.RowCount:=2;
+  strngrd1.ColCount:=3;
+  strngrd1.Cells[0,0]:='Order num';
+  strngrd1.Cells[1,0]:='Product';
+  strngrd1.Cells[2,0]:='Count';
+  temp:=head^.ADR;
     while temp<>nil do
     begin
-      if temp.ADR.INF.productName = prodname then
-      begin
-      result:=True;
-      ShowMessage('kek');
-      end;
-      temp:=temp^.ADR;
-      end;
-    end;
-  procedure writeSearchOrd(const head:OrdListADR; Input:string);
-  var temp: OrdListADR;
-  begin
-  temp:=head;
-  while temp<>nil do
+    temp2:=temp.HADR;
+    while temp2<>nil do
     begin
-      if specialized(temp.HADR,Input) then
+      if temp2.INF.productName = Input then
       begin
-      showmessage('kek');
+      strngrd1.Cells[0,strngrd1.RowCount-1]:=IntToStr(temp2.INF.orderNum);
+      strngrd1.Cells[1,strngrd1.RowCount-1]:=temp2.INF.productName;
+      strngrd1.Cells[2,strngrd1.RowCount-1]:=IntToStr(temp2.INF.productQuantity);
+      strngrd1.RowCount:= strngrd1.RowCount+1;
+      end;
+      temp2:=temp2^.ADR;
       end;
     temp:=temp^.ADR;
   end;
+  strngrd1.RowCount:= strngrd1.RowCount-1;
   end;
+
 end.
