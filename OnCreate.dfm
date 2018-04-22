@@ -31,7 +31,7 @@ object Form1: TForm1
     Width = 129
     Height = 50
     Caption = 'Add_new_list'
-    TabOrder = 1
+    TabOrder = 3
     OnClick = btnAddClick
   end
   object btn1: TButton
@@ -40,17 +40,26 @@ object Form1: TForm1
     Width = 121
     Height = 49
     Caption = 'Date_sort'
-    TabOrder = 2
+    TabOrder = 4
     OnClick = btn1Click
   end
   object btn2: TButton
-    Left = 520
-    Top = 320
-    Width = 75
-    Height = 25
-    Caption = 'btn2'
-    TabOrder = 3
+    Left = 416
+    Top = 309
+    Width = 129
+    Height = 50
+    Caption = 'Search products'
+    TabOrder = 2
     OnClick = btn2Click
+  end
+  object btn3: TButton
+    Left = 208
+    Top = 309
+    Width = 97
+    Height = 50
+    Caption = #1069#1082#1089#1087#1086#1088#1090' .txt'
+    TabOrder = 1
+    OnClick = btn3Click
   end
   object mm1: TMainMenu
     Top = 8
@@ -65,6 +74,10 @@ object Form1: TForm1
     object save1: TMenuItem
       Caption = 'Save'
       OnClick = save1Click
+    end
+    object read1: TMenuItem
+      Caption = 'Read'
+      OnClick = read1Click
     end
   end
 end

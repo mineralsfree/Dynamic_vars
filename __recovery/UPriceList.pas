@@ -180,6 +180,7 @@ procedure writePriceList (const head:PriceListADR; Grid:TStringGrid);
     begin
      temp:=head;
     while (temp^.ADR<>nil) do
+
     begin
        temp2:=temp^.ADR;
     if (temp2^.INF.productCode = productcode) then

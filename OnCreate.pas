@@ -8,7 +8,7 @@ uses
    Vcl.Dialogs, Vcl.Menus, Vcl.Grids, Vcl.StdCtrls,UPriceList,
    UOrdList,UProductList,Invoice;
 type
-  Tmode = (ordList,priceList,naclodnaya,prodlist);
+  Tmode = (ordList,priceList,naclodnaya,prodlist,search);
    TForm1 = class(TForm)
     strngrd1: TStringGrid;
     btnAdd: TButton;
@@ -18,6 +18,8 @@ type
     OrdList1: TMenuItem;
     btn1: TButton;
     btn2: TButton;
+    btn3: TButton;
+    read1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure strngrd1MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -28,12 +30,17 @@ type
     procedure btn1Click(Sender: TObject);
     procedure btn2Click(Sender: TObject);
 
+
+    procedure btn3Click(Sender: TObject);
+    procedure read1Click(Sender: TObject);
+
   private
     { Private declarations }
   public
     { Public declarations }
       end;
 var
+  savedialog:TSaveDialog;
   k:Integer;
   mode:Tmode;
   OrderHead:OrdlistADR;
@@ -44,19 +51,45 @@ implementation
 
 {$R *.dfm}
 
-
-  procedure TForm1.btn1Click(Sender: TObject);
-  begin
-  SortListOrd(OrderHead);
-  OrdWrite(OrderHead,strngrd1);
-
-  end;
+procedure TForm1.btn1Click(Sender: TObject);
+begin
+SortListOrd(OrderHead);
+OrdWrite(OrderHead,strngrd1);
+end;
 
 procedure TForm1.btn2Click(Sender: TObject);
+var str:string;
 begin
-writesearchord(OrderHead,InputBox('','','Blin'));
+mode:=search;
+str:=InputBox('','','Blin');
+writesearchord(OrderHead,str,strngrd1);
 
 end;
+
+procedure TForm1.btn3Click(Sender: TObject);
+var loc:string;
+begin
+savedialog:=TSaveDialog.Create(Self);
+saveDialog.Title := 'Save your text or word file';
+saveDialog.InitialDir := GetCurrentDir;
+  // Разрешаем сохранять файлы типа .txt и .doc
+  saveDialog.Filter := 'Text file|*.txt|Word file|*.doc';
+  // Установка расширения по умолчанию
+  saveDialog.DefaultExt := 'txt';
+  // Выбор текстовых файлов как стартовый тип фильтра
+  saveDialog.FilterIndex := 1;
+  // Отображение диалог сохранения файла
+  if saveDialog.Execute
+  then
+  else ShowMessage('Save file was cancelled');
+  // Освобождения диалога
+  loc:=saveDialog.FileName;
+   //Close;
+   saveDialog.Free;
+  invoiceSave(OrderHead, Pricehead,strngrd1.Cells[0,0],loc);
+
+end;
+
 
 procedure TForm1.btnAddClick(Sender: TObject);
 begin
@@ -73,38 +106,27 @@ begin
   end;
  end;
 end;
-  function factorial(i:integer):Int64;
-begin
-    if i = 0  then
-      result:=1
-      else
-   result:=i*factorial(i-1);
-end;
-
 procedure TForm1.FormCreate(Sender: TObject);
 var
   I: Integer;
 begin
-btn1.Visible:=True  ;
-//ShowMessage(IntToStr(factorial(StrToInt(inputbox('Input','count factorial','2')))));
+btn1.Visible:=True;
+btn3.Visible:=False;
 new(OrderHead);
 OrderHead^.ADR:=nil;
 OrderHead^.HADR:=nil;
 
-readOrdlist(OrderHead,'OrdList.brakmen');
-readproductlist(OrderHead,'kek.brakhmen');
 OrdWrite(OrderHead, strngrd1);
-
 new(Pricehead);
- Pricehead^.ADR:=nil;
- ReadPriceList(Pricehead,'priceList.brakhmen');
+Pricehead^.ADR:=nil;
 
 end;
 
 procedure TForm1.OrdList1Click(Sender: TObject);
 begin
 mode:=ordList;
- btn1.Visible:=true;
+btn1.Visible:=true;
+btn3.Visible:=False;
 btnAdd.Visible:=True;
 OrdWrite(OrderHead, strngrd1);
 end;
@@ -112,9 +134,18 @@ end;
 procedure TForm1.priceList1Click(Sender: TObject);
 begin
  mode:=priceList;
+ btn3.Visible:=False;
  btn1.Visible:=false;
  btnAdd.Visible:=True;
  writePriceList(Pricehead,strngrd1);
+end;
+
+procedure TForm1.read1Click(Sender: TObject);
+begin
+readOrdlist(OrderHead,'OrdList.brakmen');
+readproductlist(OrderHead,'kek.brakhmen');
+ReadPriceList(Pricehead,'priceList.brakhmen');
+OrdWrite(OrderHead,strngrd1);
 end;
 
 procedure TForm1.save1Click(Sender: TObject);
@@ -149,7 +180,7 @@ case mode of
   begin
    if Acol = 3 then
    begin
-     // if MessageDlg('Точно?',mtCustom, mbYesNo, 0) = mrYes then
+      if MessageDlg('Точно?',mtCustom, mbYesNo, 0) = mrYes then
       begin
         prodname:=strngrd1.Cells[1,Arow];
        ordnum:=strtoint(strngrd1.Cells[0,Arow]);
@@ -198,12 +229,15 @@ case mode of
 
    if  Acol = 5 then
     begin
+    mode:=naclodnaya;
     sordnum:=Trim(strngrd1.Cells[0,Arow]);
-    makeNaklodnayaGreatAgain(OrderHead,Pricehead,Arow,strngrd1,sordnum);
+    makeNaklodnayaGreatAgain(OrderHead,Pricehead,strngrd1,sordnum);
+    btn3.Visible:=True;
+    btn1.Visible:=False;
     end;
     if  Acol = 6 then
     begin
-   // if MessageDlg('Точно?',mtCustom, mbYesNo, 0) = mrYes then
+    if MessageDlg('Точно?',mtCustom, mbYesNo, 0) = mrYes then
     begin
       sordnum:=Trim(strngrd1.Cells[0,Arow]);
       DeleteOrdList(OrderHead,sordnum);
@@ -215,7 +249,7 @@ case mode of
     begin
       if Acol = 3 then
       begin
-      //if MessageDlg('Точно?',mtCustom, mbYesNo, 0) = mrYes then
+      if MessageDlg('Точно?',mtCustom, mbYesNo, 0) = mrYes then
         begin
         ordnum:=StrToInt(strngrd1.Cells[2,Arow]);
         sordnum:=IntToStr(ordnum);
@@ -229,7 +263,7 @@ case mode of
 
     end;
 
-end;
+ end;
  end;
 end;
 end.
